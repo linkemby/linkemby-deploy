@@ -14,7 +14,7 @@ LinkEmby 是一个基于 Next.js 的 Emby 媒体服务器管理系统，提供�
 使用以下命令一键安装 LinkEmby：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
 安装脚本将自动：
@@ -30,7 +30,7 @@ curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install
 重新运行安装脚本即可升级：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
 升级时会：
@@ -77,10 +77,10 @@ cd /opt/linkemby
 
 ```bash
 # 下载 docker compose.yml
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/docker compose.yml -o docker compose.yml
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/docker compose.yml -o docker compose.yml
 
 # 下载 .env.example
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/.env.example -o .env.example
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/.env.example -o .env.example
 ```
 
 ### 3. 配置环境变量

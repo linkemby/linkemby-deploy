@@ -13,13 +13,13 @@ LinkEmby 是一个基于 Next.js 的 Emby 媒体服务器管理系统，提供�
 ### 一键安装
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
 ### 一键升级
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
 ---

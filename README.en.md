@@ -14,7 +14,7 @@ LinkEmby is a Next.js-based Emby media server management system with dual-interf
 Install LinkEmby with a single command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
 The installation script will automatically:
@@ -30,7 +30,7 @@ The installation script will automatically:
 Re-run the installation script to upgrade:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
 During upgrade:
@@ -77,10 +77,10 @@ cd /opt/linkemby
 
 ```bash
 # Download docker compose.yml
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/docker compose.yml -o docker compose.yml
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/docker compose.yml -o docker compose.yml
 
 # Download .env.example
-curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/.env.example -o .env.example
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/.env.example -o .env.example
 ```
 
 ### 3. Configure Environment Variables
