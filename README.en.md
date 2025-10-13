@@ -152,6 +152,51 @@ docker compose up -d
 
 ---
 
+## 📝 Environment Variables
+
+### Database Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `POSTGRES_USER` | Database username | linkemby |
+| `POSTGRES_PASSWORD` | Database password | **Auto-generated** |
+| `POSTGRES_DB` | Database name | linkemby |
+| `POSTGRES_PORT` | PostgreSQL port | 5432 |
+
+### Redis Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `REDIS_PASSWORD` | Redis password | **Auto-generated** |
+| `REDIS_PORT` | Redis port | 6379 |
+
+### Application Configuration
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `NEXTAUTH_URL` | External access URL | http://localhost:3000 |
+| `LINKEMBY_PORT` | Application port | 3000 |
+| `NODE_ENV` | Runtime environment | production |
+
+### Security Keys (Auto-generated)
+
+| Variable | Description | Format |
+|----------|-------------|--------|
+| `NEXTAUTH_SECRET` | NextAuth secret | Base64, 32 bytes |
+| `ENCRYPTION_KEY` | Encryption key | Hex, 32 chars |
+| `ENCRYPTION_IV` | Encryption vector | Hex, 16 chars |
+| `CRON_SECRET` | Cron auth secret | Base64, 32 bytes |
+
+### Logging Configuration
+
+| Variable | Description | Options |
+|----------|-------------|---------|
+| `LOG_LEVEL` | Log level | error, warn, info, debug |
+| `LOG_TO_FILE` | Write to file | true, false |
+| `LOG_FILE_PATH` | Log path | /app/data/logs |
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License.
