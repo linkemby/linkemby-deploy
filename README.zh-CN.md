@@ -128,9 +128,16 @@ docker compose logs -f
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
 | `POSTGRES_USER` | 数据库用户名 | linkemby |
-| `POSTGRES_PASSWORD` | 数据库密码 | **必须修改** |
+| `POSTGRES_PASSWORD` | 数据库密码 | **自动生成** |
 | `POSTGRES_DB` | 数据库名称 | linkemby |
 | `POSTGRES_PORT` | PostgreSQL 端口 | 5432 |
+
+### Redis 配置
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `REDIS_PASSWORD` | Redis 密码 | **自动生成** |
+| `REDIS_PORT` | Redis 端口 | 6379 |
 
 ### 应用配置
 
