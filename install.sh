@@ -125,6 +125,8 @@ generate_secrets() {
     ENCRYPTION_KEY=$(generate_hex 32)
     ENCRYPTION_IV=$(generate_hex 16)
     CRON_SECRET=$(generate_base64)
+    POSTGRES_PASSWORD=$(generate_base64 | tr -d '/+=' | cut -c1-32)
+    REDIS_PASSWORD=$(generate_base64 | tr -d '/+=' | cut -c1-32)
 
     print_success "Security keys generated"
 }
@@ -140,7 +142,6 @@ interactive_config() {
     NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
 
     # Other configurations use defaults from environment or hardcoded
-    POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-linkemby}
     LINKEMBY_PORT=${LINKEMBY_PORT:-3000}
     POSTGRES_PORT=${POSTGRES_PORT:-5432}
     REDIS_PORT=${REDIS_PORT:-6379}
@@ -172,8 +173,9 @@ DATABASE_URL=postgresql://linkemby:${POSTGRES_PASSWORD}@postgres:5432/linkemby
 # --------------------------------------------
 # Redis Configuration
 # --------------------------------------------
+REDIS_PASSWORD=${REDIS_PASSWORD}
 REDIS_PORT=${REDIS_PORT}
-REDIS_URL=redis://redis:6379
+REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
 
 # --------------------------------------------
 # Application Configuration
