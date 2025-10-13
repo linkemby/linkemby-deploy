@@ -79,6 +79,13 @@ check_requirements() {
         exit 1
     fi
     print_success "Docker 服务运行正常"
+
+    # Check OpenSSL
+    if ! command_exists openssl; then
+        print_error "OpenSSL 未安装，请先安装 OpenSSL"
+        exit 1
+    fi
+    print_success "OpenSSL 已安装"
 }
 
 # Detect installation mode
