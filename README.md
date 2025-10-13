@@ -40,14 +40,6 @@ curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install
 
 ---
 
-## 🔗 相关链接
-
-- **项目主页**: https://github.com/linkemby/linkemby-deploy
-- **问题反馈**: https://github.com/linkemby/linkemby-deploy/issues
-- **部署仓库**: https://github.com/linkemby/linkemby-deploy
-
----
-
 ## 📄 开源协议
 
 MIT License

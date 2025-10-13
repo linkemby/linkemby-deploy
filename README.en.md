@@ -152,14 +152,6 @@ docker compose up -d
 
 ---
 
-## 📚 More Information
-
-- **Project Homepage**: https://github.com/linkemby/linkemby-deploy
-- **Issue Tracker**: https://github.com/linkemby/linkemby-deploy/issues
-- **Deployment Repository**: https://github.com/linkemby/linkemby-deploy
-
----
-
 ## 📄 License
 
 This project is licensed under the MIT License.
