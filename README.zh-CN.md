@@ -303,8 +303,8 @@ docker compose up -d
 
 ## 📚 更多信息
 
-- **项目主页**: https://github.com/linkemby/linkemby
-- **问题反馈**: https://github.com/linkemby/linkemby/issues
+- **项目主页**: https://github.com/linkemby/linkemby-deploy
+- **问题反馈**: https://github.com/linkemby/linkemby-deploy/issues
 - **部署仓库**: https://github.com/linkemby/linkemby-deploy
 
 ---
