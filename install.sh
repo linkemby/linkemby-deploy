@@ -66,7 +66,7 @@ check_requirements() {
     print_success "Docker is installed"
 
     # Check Docker Compose
-    if ! command_exists docker-compose && ! docker compose version >/dev/null 2>&1; then
+    if ! docker compose version >/dev/null 2>&1; then
         print_error "Docker Compose is not installed. Please install Docker Compose first."
         print_info "Visit: https://docs.docker.com/compose/install/"
         exit 1
@@ -237,7 +237,7 @@ pull_images() {
     print_info "Pulling Docker images..."
 
     cd "$INSTALL_DIR"
-    docker-compose pull
+    docker compose pull
 
     print_success "Docker images pulled"
 }
@@ -247,7 +247,7 @@ start_services() {
     print_info "Starting services..."
 
     cd "$INSTALL_DIR"
-    docker-compose up -d
+    docker compose up -d
 
     print_success "Services started"
 }
@@ -257,7 +257,7 @@ stop_services() {
     print_info "Stopping services..."
 
     cd "$INSTALL_DIR"
-    docker-compose down
+    docker compose down
 
     print_success "Services stopped"
 }
@@ -274,13 +274,13 @@ show_status() {
     echo ""
     print_info "Service Status:"
     cd "$INSTALL_DIR"
-    docker-compose ps
+    docker compose ps
     echo ""
     print_info "Useful Commands:"
-    echo "  Start services:   cd $INSTALL_DIR && docker-compose up -d"
-    echo "  Stop services:    cd $INSTALL_DIR && docker-compose down"
-    echo "  View logs:        cd $INSTALL_DIR && docker-compose logs -f"
-    echo "  Restart services: cd $INSTALL_DIR && docker-compose restart"
+    echo "  Start services:   cd $INSTALL_DIR && docker compose up -d"
+    echo "  Stop services:    cd $INSTALL_DIR && docker compose down"
+    echo "  View logs:        cd $INSTALL_DIR && docker compose logs -f"
+    echo "  Restart services: cd $INSTALL_DIR && docker compose restart"
     echo "  Update services:  curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash"
     echo ""
     print_warning "Please wait 30-60 seconds for the application to fully start."
@@ -353,7 +353,7 @@ main() {
         echo ""
         print_info "Service Status:"
         cd "$INSTALL_DIR"
-        docker-compose ps
+        docker compose ps
         echo ""
     fi
 }
