@@ -135,22 +135,14 @@ interactive_config() {
     print_info "=== LinkEmby Configuration ==="
     echo ""
 
-    # Database password
-    read -p "Enter PostgreSQL password [default: linkemby]: " POSTGRES_PASSWORD
-    POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-linkemby}
-
-    # NEXTAUTH_URL
+    # NEXTAUTH_URL - Only interactive input needed
     read -p "Enter external access URL [default: http://localhost:3000]: " NEXTAUTH_URL
     NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
 
-    # Port configuration
-    read -p "Enter LinkEmby port [default: 3000]: " LINKEMBY_PORT
+    # Other configurations use defaults from environment or hardcoded
+    POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-linkemby}
     LINKEMBY_PORT=${LINKEMBY_PORT:-3000}
-
-    read -p "Enter PostgreSQL port [default: 5432]: " POSTGRES_PORT
     POSTGRES_PORT=${POSTGRES_PORT:-5432}
-
-    read -p "Enter Redis port [default: 6379]: " REDIS_PORT
     REDIS_PORT=${REDIS_PORT:-6379}
 
     echo ""
