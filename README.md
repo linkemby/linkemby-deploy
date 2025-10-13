@@ -42,9 +42,9 @@ curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install
 
 ## 🔗 相关链接
 
-- **项目主页**: https://github.com/monlor/linkemby
-- **问题反馈**: https://github.com/monlor/linkemby/issues
-- **部署仓库**: https://github.com/monlor/linkemby-deploy
+- **项目主页**: https://github.com/linkemby/linkemby
+- **问题反馈**: https://github.com/linkemby/linkemby/issues
+- **部署仓库**: https://github.com/linkemby/linkemby-deploy
 
 ---
 

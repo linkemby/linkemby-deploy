@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   linkemby:
-    image: ghcr.io/monlor/linkemby:v0.1.0
+    image: ghcr.io/linkemby/linkemby:v0.1.0
     container_name: linkemby
     restart: unless-stopped
     environment:

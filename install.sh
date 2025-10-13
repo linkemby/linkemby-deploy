@@ -11,8 +11,8 @@ NC='\033[0m' # No Color
 
 # Configuration
 INSTALL_DIR="/opt/linkemby"
-REPO_BASE_URL="https://raw.githubusercontent.com/monlor/linkemby-deploy/main"
-DOCKER_IMAGE="ghcr.io/monlor/linkemby:v0.1.0"
+REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
+DOCKER_IMAGE="ghcr.io/linkemby/linkemby:v0.1.0"
 
 # Print colored message
 print_message() {
@@ -275,7 +275,7 @@ show_status() {
     echo "  停止服务:   cd $INSTALL_DIR && docker compose down"
     echo "  查看日志:   cd $INSTALL_DIR && docker compose logs -f"
     echo "  重启服务:   cd $INSTALL_DIR && docker compose restart"
-    echo "  升级服务:   curl -fsSL https://raw.githubusercontent.com/monlor/linkemby-deploy/main/install.sh | bash"
+    echo "  升级服务:   curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash"
     echo ""
     print_warning "请等待 30-60 秒让应用完全启动"
     print_info "然后访问: $NEXTAUTH_URL"
