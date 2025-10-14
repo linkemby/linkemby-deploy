@@ -271,14 +271,29 @@ pull_images() {
     print_success "Docker 镜像拉取完成"
 }
 
+# Create data directories
+create_data_dirs() {
+    print_info "正在创建数据目录..."
+
+    mkdir -p "$INSTALL_DIR/data/linkemby"
+    mkdir -p "$INSTALL_DIR/data/postgres"
+    mkdir -p "$INSTALL_DIR/data/redis"
+
+    print_success "数据目录创建完成"
+}
+
 # Start services
 start_services() {
     print_info "正在启动服务..."
 
     cd "$INSTALL_DIR"
-    docker compose up -d
-
-    print_success "服务启动成功"
+    if docker compose up -d; then
+        print_success "服务启动成功"
+    else
+        print_error "服务启动失败"
+        print_info "查看日志: cd $INSTALL_DIR && docker compose logs"
+        exit 1
+    fi
 }
 
 # Stop services
@@ -353,6 +368,9 @@ main() {
 
         # Pull images
         pull_images
+
+        # Create data directories
+        create_data_dirs
 
         # Start services
         start_services
