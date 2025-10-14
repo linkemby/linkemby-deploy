@@ -147,6 +147,20 @@ generate_secrets() {
     print_success "安全密钥生成完成"
 }
 
+# Get environment variable from .env file
+get_env_value() {
+    local env_file="$1"
+    local key="$2"
+    local default_value="$3"
+
+    if [ -f "$env_file" ]; then
+        local value=$(grep "^${key}=" "$env_file" 2>/dev/null | cut -d '=' -f2-)
+        echo "${value:-$default_value}"
+    else
+        echo "$default_value"
+    fi
+}
+
 # Validate URL format
 validate_url() {
     local url=$1
@@ -167,30 +181,17 @@ interactive_config() {
     print_info "=== LinkEmby 配置 ==="
     echo ""
 
-    # Installation directory
-    read -r -p "请输入安装目录 (回车使用默认值 $DEFAULT_INSTALL_DIR): " INSTALL_DIR </dev/tty
-    INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
-    echo ""
-
     # Read existing .env values if available
-    local existing_nextauth_url=""
-    local existing_linkemby_port=""
-    local existing_postgres_port=""
-    local existing_redis_port=""
-
-    if [ -f "$INSTALL_DIR/.env" ]; then
+    local env_file="$INSTALL_DIR/.env"
+    if [ -f "$env_file" ]; then
         print_info "检测到现有配置，读取默认值..."
-        existing_nextauth_url=$(grep "^NEXTAUTH_URL=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
-        existing_linkemby_port=$(grep "^LINKEMBY_PORT=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
-        existing_postgres_port=$(grep "^POSTGRES_PORT=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
-        existing_redis_port=$(grep "^REDIS_PORT=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
     fi
 
-    # Set defaults from existing values or fallback to hardcoded defaults
-    local default_nextauth_url=${existing_nextauth_url:-http://localhost:3000}
-    local default_linkemby_port=${existing_linkemby_port:-3000}
-    local default_postgres_port=${existing_postgres_port:-5432}
-    local default_redis_port=${existing_redis_port:-6379}
+    # Get defaults from existing .env or use hardcoded defaults
+    local default_nextauth_url=$(get_env_value "$env_file" "NEXTAUTH_URL" "http://localhost:3000")
+    local default_linkemby_port=$(get_env_value "$env_file" "LINKEMBY_PORT" "3000")
+    local default_postgres_port=$(get_env_value "$env_file" "POSTGRES_PORT" "5432")
+    local default_redis_port=$(get_env_value "$env_file" "REDIS_PORT" "6379")
 
     # NEXTAUTH_URL
     while true; do
@@ -361,15 +362,22 @@ main() {
     # Check requirements
     check_requirements
 
-    # Detect mode
-    if detect_mode; then
+    # Get installation directory first
+    echo ""
+    print_info "=== 安装目录配置 ==="
+    read -r -p "请输入安装目录 (回车使用默认值 $DEFAULT_INSTALL_DIR): " INSTALL_DIR </dev/tty
+    INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
+    echo ""
+
+    # Detect mode based on the specified directory
+    if detect_mode "$INSTALL_DIR"; then
         # Fresh installation
         MODE="install"
 
         # Generate secrets
         generate_secrets
 
-        # Interactive configuration
+        # Interactive configuration (without asking for install dir again)
         interactive_config
 
         # Create directory
@@ -397,8 +405,8 @@ main() {
         print_info "您的 .env 配置和密钥将被完全保留"
         print_info "仅更新 docker-compose.yml 配置文件"
 
-        # Stop services
-        stop_services
+        # Read NEXTAUTH_URL from existing .env for status display
+        NEXTAUTH_URL=$(get_env_value "$INSTALL_DIR/.env" "NEXTAUTH_URL" "")
 
         # Download new docker-compose.yml only (preserve .env and secrets)
         download_configs "upgrade"
@@ -406,7 +414,7 @@ main() {
         # Pull new images
         pull_images
 
-        # Start services
+        # Restart services (docker compose will handle rolling update automatically)
         start_services
 
         # Show status
