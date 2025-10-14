@@ -203,14 +203,14 @@ POSTGRES_USER=linkemby
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 POSTGRES_DB=linkemby
 POSTGRES_PORT=${POSTGRES_PORT}
-DATABASE_URL=postgresql://linkemby:${POSTGRES_PASSWORD}@postgres:5432/linkemby
+DATABASE_URL=postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@postgres:\${POSTGRES_PORT}/\${POSTGRES_DB}
 
 # --------------------------------------------
 # Redis Configuration
 # --------------------------------------------
 REDIS_PASSWORD=${REDIS_PASSWORD}
 REDIS_PORT=${REDIS_PORT}
-REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
+REDIS_URL=redis://:\${REDIS_PASSWORD}@redis:\${REDIS_PORT}
 
 # --------------------------------------------
 # Application Configuration

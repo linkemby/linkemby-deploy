@@ -23,7 +23,7 @@ services:
     ports:
       - "${LINKEMBY_PORT:-3000}:3000"
     volumes:
-      - ./data/linkemby:/app/data
+      - /opt/linkemby/data/linkemby:/app/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -49,7 +49,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - /opt/linkemby/data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "PGPASSWORD=${POSTGRES_PASSWORD} pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
@@ -66,7 +66,7 @@ services:
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
-      - ./data/redis:/data
+      - /opt/linkemby/data/redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
@@ -92,11 +92,6 @@ services:
         condition: service_healthy
     networks:
       - linkemby
-
-volumes:
-  postgres_data:
-  redis_data:
-  linkemby_data:
 
 networks:
   linkemby:
