@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -151,7 +153,7 @@ interactive_config() {
     echo ""
 
     # NEXTAUTH_URL - Only interactive input needed
-    read -p "请输入外网访问地址 [默认: http://localhost:3000]: " NEXTAUTH_URL
+    read -r -p "请输入外网访问地址 [默认: http://localhost:3000]: " NEXTAUTH_URL
     NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
 
     # Other configurations use defaults from environment or hardcoded
@@ -356,15 +358,8 @@ main() {
         # Start services
         start_services
 
-        echo ""
-        print_success "==================================="
-        print_success "  LinkEmby 升级完成！"
-        print_success "==================================="
-        echo ""
-        print_info "服务状态:"
-        cd "$INSTALL_DIR"
-        docker compose ps
-        echo ""
+        # Show status
+        show_status
     fi
 }
 
