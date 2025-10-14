@@ -317,14 +317,14 @@ main() {
         # Create directory
         create_install_dir
 
-        # Download configs
-        download_configs
-
         # Generate secrets
         generate_secrets
 
         # Interactive configuration
         interactive_config
+
+        # Download configs
+        download_configs
 
         # Create .env file
         create_env_file
