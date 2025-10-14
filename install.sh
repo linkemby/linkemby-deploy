@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -8,7 +10,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-INSTALL_DIR="/opt/linkemby"
+DEFAULT_INSTALL_DIR="/opt/linkemby"
 REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
 DOCKER_IMAGE="ghcr.io/linkemby/linkemby:v0.1.0"
 
@@ -51,11 +53,14 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# Check if running as root
-check_root() {
-    if [ "$(id -u)" -ne 0 ]; then
-        print_error "此脚本必须以 root 用户运行"
-        print_info "请使用: sudo bash install.sh"
+# Check Docker permission
+check_docker_permission() {
+    if ! docker ps >/dev/null 2>&1; then
+        print_error "无法执行 Docker 命令，请确保当前用户有 Docker 权限"
+        print_info "解决方法："
+        print_info "1. 将用户添加到 docker 组: sudo usermod -aG docker \$USER"
+        print_info "2. 注销并重新登录，或运行: newgrp docker"
+        print_info "3. 或使用 sudo 运行此脚本"
         exit 1
     fi
 }
@@ -80,12 +85,9 @@ check_requirements() {
     fi
     print_success "Docker Compose 已安装"
 
-    # Check if Docker daemon is running
-    if ! docker ps >/dev/null 2>&1; then
-        print_error "Docker 服务未运行，请先启动 Docker"
-        exit 1
-    fi
-    print_success "Docker 服务运行正常"
+    # Check Docker permission
+    check_docker_permission
+    print_success "Docker 权限检查通过"
 
     # Check OpenSSL
     if ! command_exists openssl; then
@@ -97,8 +99,10 @@ check_requirements() {
 
 # Detect installation mode
 detect_mode() {
-    if [ -f "$INSTALL_DIR/.env" ]; then
+    local check_dir=${1:-$DEFAULT_INSTALL_DIR}
+    if [ -f "$check_dir/.env" ]; then
         print_info "检测到现有安装，运行升级模式"
+        INSTALL_DIR="$check_dir"
         return 1
     else
         print_info "未检测到现有安装，运行全新安装模式"
@@ -164,9 +168,14 @@ interactive_config() {
     print_info "=== LinkEmby 配置 ==="
     echo ""
 
-    # NEXTAUTH_URL - Only interactive input needed
+    # Installation directory
+    read -r -p "请输入安装目录 (回车使用默认值 $DEFAULT_INSTALL_DIR): " INSTALL_DIR </dev/tty
+    INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
+    echo ""
+
+    # NEXTAUTH_URL
     while true; do
-        read -r -p "请输入外网访问地址 [默认: http://localhost:3000]: " NEXTAUTH_URL </dev/tty
+        read -r -p "请输入外网访问地址 (回车使用默认值 http://localhost:3000): " NEXTAUTH_URL </dev/tty
         NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
 
         if validate_url "$NEXTAUTH_URL"; then
@@ -271,17 +280,6 @@ pull_images() {
     print_success "Docker 镜像拉取完成"
 }
 
-# Create data directories
-create_data_dirs() {
-    print_info "正在创建数据目录..."
-
-    mkdir -p "$INSTALL_DIR/data/linkemby"
-    mkdir -p "$INSTALL_DIR/data/postgres"
-    mkdir -p "$INSTALL_DIR/data/redis"
-
-    print_success "数据目录创建完成"
-}
-
 # Start services
 start_services() {
     print_info "正在启动服务..."
@@ -340,9 +338,6 @@ main() {
     print_info "==================================="
     echo ""
 
-    # Check root
-    check_root
-
     # Check requirements
     check_requirements
 
@@ -351,14 +346,14 @@ main() {
         # Fresh installation
         MODE="install"
 
-        # Create directory
-        create_install_dir
-
         # Generate secrets
         generate_secrets
 
         # Interactive configuration
         interactive_config
+
+        # Create directory
+        create_install_dir
 
         # Download configs
         download_configs
@@ -368,9 +363,6 @@ main() {
 
         # Pull images
         pull_images
-
-        # Create data directories
-        create_data_dirs
 
         # Start services
         start_services
