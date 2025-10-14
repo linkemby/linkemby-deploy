@@ -144,6 +144,20 @@ generate_secrets() {
     print_success "安全密钥生成完成"
 }
 
+# Validate URL format
+validate_url() {
+    local url=$1
+    # Check if URL starts with http:// or https://
+    if [[ ! $url =~ ^https?:// ]]; then
+        return 1
+    fi
+    # Check if URL has valid format
+    if [[ ! $url =~ ^https?://[a-zA-Z0-9][a-zA-Z0-9-]*(\.[a-zA-Z0-9][a-zA-Z0-9-]*)*(:[0-9]+)?(/.*)?$ ]]; then
+        return 1
+    fi
+    return 0
+}
+
 # Interactive configuration
 interactive_config() {
     echo ""
@@ -151,8 +165,16 @@ interactive_config() {
     echo ""
 
     # NEXTAUTH_URL - Only interactive input needed
-    read -r -p "请输入外网访问地址 [默认: http://localhost:3000]: " NEXTAUTH_URL
-    NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+    while true; do
+        read -r -p "请输入外网访问地址 [默认: http://localhost:3000]: " NEXTAUTH_URL </dev/tty
+        NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+
+        if validate_url "$NEXTAUTH_URL"; then
+            break
+        else
+            print_error "URL 格式不正确，请输入有效的 http:// 或 https:// 地址"
+        fi
+    done
 
     # Other configurations use defaults from environment or hardcoded
     LINKEMBY_PORT=${LINKEMBY_PORT:-3000}
