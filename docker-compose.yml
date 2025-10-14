@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   linkemby:
     image: ghcr.io/linkemby/linkemby:v0.1.0
