@@ -53,6 +53,15 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+# Check if running as root
+check_root() {
+    if [ "$(id -u)" -ne 0 ]; then
+        print_error "此脚本必须以 root 用户运行"
+        print_info "请使用: sudo bash install.sh"
+        exit 1
+    fi
+}
+
 # Check system requirements
 check_requirements() {
     print_info "正在检查系统环境..."
@@ -119,8 +128,7 @@ download_file() {
 # Create installation directory
 create_install_dir() {
     print_info "正在创建安装目录: $INSTALL_DIR"
-    sudo mkdir -p "$INSTALL_DIR"
-    sudo chown -R $USER:$USER "$INSTALL_DIR"
+    mkdir -p "$INSTALL_DIR"
     print_success "安装目录创建成功"
 }
 
@@ -296,6 +304,9 @@ main() {
     print_info "  LinkEmby 安装脚本"
     print_info "==================================="
     echo ""
+
+    # Check root
+    check_root
 
     # Check requirements
     check_requirements
