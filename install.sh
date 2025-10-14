@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 # Configuration
 DEFAULT_INSTALL_DIR="/opt/linkemby"
 REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
-DOCKER_IMAGE="ghcr.io/linkemby/linkemby:v0.1.0"
+DOCKER_IMAGE="ghcr.io/linkemby/linkemby:v0.1.1"
 
 # Print colored message
 print_message() {
