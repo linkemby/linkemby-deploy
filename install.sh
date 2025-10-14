@@ -99,7 +99,7 @@ check_requirements() {
 # Detect installation mode
 detect_mode() {
     local check_dir=${1:-$DEFAULT_INSTALL_DIR}
-    if [ -f "$check_dir/.env" ]; then
+    if [ -f "$check_dir/.env" ] && [ -f "$check_dir/docker-compose.yml" ]; then
         print_info "检测到现有安装，运行升级模式"
         INSTALL_DIR="$check_dir"
         return 1
@@ -172,10 +172,30 @@ interactive_config() {
     INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
     echo ""
 
+    # Read existing .env values if available
+    local existing_nextauth_url=""
+    local existing_linkemby_port=""
+    local existing_postgres_port=""
+    local existing_redis_port=""
+
+    if [ -f "$INSTALL_DIR/.env" ]; then
+        print_info "检测到现有配置，读取默认值..."
+        existing_nextauth_url=$(grep "^NEXTAUTH_URL=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
+        existing_linkemby_port=$(grep "^LINKEMBY_PORT=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
+        existing_postgres_port=$(grep "^POSTGRES_PORT=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
+        existing_redis_port=$(grep "^REDIS_PORT=" "$INSTALL_DIR/.env" 2>/dev/null | cut -d '=' -f2-)
+    fi
+
+    # Set defaults from existing values or fallback to hardcoded defaults
+    local default_nextauth_url=${existing_nextauth_url:-http://localhost:3000}
+    local default_linkemby_port=${existing_linkemby_port:-3000}
+    local default_postgres_port=${existing_postgres_port:-5432}
+    local default_redis_port=${existing_redis_port:-6379}
+
     # NEXTAUTH_URL
     while true; do
-        read -r -p "请输入外网访问地址 (回车使用默认值 http://localhost:3000): " NEXTAUTH_URL </dev/tty
-        NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+        read -r -p "请输入外网访问地址 (回车使用默认值 $default_nextauth_url): " NEXTAUTH_URL </dev/tty
+        NEXTAUTH_URL=${NEXTAUTH_URL:-$default_nextauth_url}
 
         if validate_url "$NEXTAUTH_URL"; then
             break
@@ -184,10 +204,10 @@ interactive_config() {
         fi
     done
 
-    # Other configurations use defaults from environment or hardcoded
-    LINKEMBY_PORT=${LINKEMBY_PORT:-3000}
-    POSTGRES_PORT=${POSTGRES_PORT:-5432}
-    REDIS_PORT=${REDIS_PORT:-6379}
+    # Other configurations use defaults from existing .env or hardcoded values
+    LINKEMBY_PORT=${LINKEMBY_PORT:-$default_linkemby_port}
+    POSTGRES_PORT=${POSTGRES_PORT:-$default_postgres_port}
+    REDIS_PORT=${REDIS_PORT:-$default_redis_port}
 
     echo ""
 }
@@ -257,12 +277,13 @@ EOF
 
 # Download configuration files
 download_configs() {
+    local mode=$1
     print_info "正在下载配置文件..."
 
     download_file "docker-compose.yml" "$INSTALL_DIR/docker-compose.yml"
 
-    # Only download .env.example, don't overwrite .env
-    if [ ! -f "$INSTALL_DIR/.env.example" ]; then
+    # Only download .env.example in fresh installation mode
+    if [ "$mode" = "install" ] && [ ! -f "$INSTALL_DIR/.env.example" ]; then
         download_file ".env.example" "$INSTALL_DIR/.env.example"
     fi
 
@@ -355,7 +376,7 @@ main() {
         create_install_dir
 
         # Download configs
-        download_configs
+        download_configs "install"
 
         # Create .env file
         create_env_file
@@ -373,13 +394,14 @@ main() {
         MODE="upgrade"
 
         print_warning "正在升级现有安装..."
-        print_info "您的 .env 配置文件将被保留"
+        print_info "您的 .env 配置和密钥将被完全保留"
+        print_info "仅更新 docker-compose.yml 配置文件"
 
         # Stop services
         stop_services
 
-        # Download new configs (except .env)
-        download_configs
+        # Download new docker-compose.yml only (preserve .env and secrets)
+        download_configs "upgrade"
 
         # Pull new images
         pull_images
