@@ -341,23 +341,13 @@ setup_data_directories() {
         "$INSTALL_DIR/data/redis"
     )
 
+    # Create directories and set permissions
     for dir in "${data_dirs[@]}"; do
-        if [ ! -d "$dir" ]; then
-            mkdir -p "$dir"
-            print_success "创建目录: $dir"
-        else
-            print_info "目录已存在: $dir"
-        fi
+        mkdir -p "$dir"
+        chmod 777 "$dir"
     done
 
-    # Set full permissions (777) for data directories to avoid Docker volume permission issues
-    if command -v chmod >/dev/null 2>&1; then
-        # Set directory permissions: rwxrwxrwx (777)
-        chmod -R 777 "$INSTALL_DIR/data" 2>/dev/null || true
-        print_success "权限设置完成 (777)"
-    else
-        print_warning "chmod 命令不可用，跳过权限设置"
-    fi
+    print_success "数据目录创建完成，权限已设置为 777"
 }
 
 # Pull Docker images
