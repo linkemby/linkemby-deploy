@@ -1,6 +1,6 @@
 services:
   linkemby:
-    image: ghcr.io/linkemby/linkemby:v0.1.2
+    image: ghcr.io/linkemby/linkemby:v0.1.3
     container_name: linkemby
     restart: unless-stopped
     environment:
