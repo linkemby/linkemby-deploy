@@ -96,4 +96,3 @@ services:
 networks:
   linkemby:
     driver: bridge
-    enable_ipv6: true
