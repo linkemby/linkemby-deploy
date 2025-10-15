@@ -45,7 +45,7 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 
 - **操作系统**: Linux (Ubuntu 20.04+, Debian 11+, CentOS 8+)
 - **Docker**: 20.10+
-- **Docker Compose**: 2.0+
+- **Docker Compose**: 2.0+ (支持 `docker compose` 和 `docker-compose` 两种命令格式)
 - **内存**: 最低 2GB，推荐 4GB+
 - **磁盘**: 最低 10GB 可用空间
 
@@ -167,6 +167,8 @@ docker compose logs -f
 ---
 
 ## 🛠️ 常用命令
+
+> **提示**: 以下命令使用 `docker compose` 格式(推荐),如果你的系统使用旧版本,请将 `docker compose` 替换为 `docker-compose`
 
 ```bash
 # 进入安装目录

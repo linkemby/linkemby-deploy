@@ -45,7 +45,7 @@ During upgrade:
 
 - **Operating System**: Linux (Ubuntu 20.04+, Debian 11+, CentOS 8+)
 - **Docker**: 20.10+
-- **Docker Compose**: 2.0+
+- **Docker Compose**: 2.0+ (supports both `docker compose` and `docker-compose` command formats)
 - **Memory**: Minimum 2GB, Recommended 4GB+
 - **Disk**: Minimum 10GB available space
 
@@ -122,6 +122,8 @@ docker compose logs -f
 ---
 
 ## 🛠️ Common Commands
+
+> **Note**: The following commands use `docker compose` format (recommended). If your system uses the legacy version, replace `docker compose` with `docker-compose`
 
 ```bash
 # Navigate to installation directory

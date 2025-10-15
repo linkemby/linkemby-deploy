@@ -64,6 +64,20 @@ check_docker_permission() {
     fi
 }
 
+# Detect and set Docker Compose command
+detect_compose_command() {
+    if docker compose version >/dev/null 2>&1; then
+        COMPOSE_CMD="docker compose"
+        print_success "检测到 Docker Compose (新版本)"
+    elif docker-compose version >/dev/null 2>&1; then
+        COMPOSE_CMD="docker-compose"
+        print_success "检测到 Docker Compose (旧版本)"
+    else
+        print_error "未检测到 Docker Compose 命令"
+        exit 1
+    fi
+}
+
 # Check system requirements
 check_requirements() {
     print_info "正在检查系统环境..."
@@ -76,17 +90,12 @@ check_requirements() {
     fi
     print_success "Docker 已安装"
 
-    # Check Docker Compose
-    if ! docker compose version >/dev/null 2>&1; then
-        print_error "Docker Compose 未安装，请先安装 Docker Compose"
-        print_info "访问: https://docs.docker.com/compose/install/"
-        exit 1
-    fi
-    print_success "Docker Compose 已安装"
-
     # Check Docker permission
     check_docker_permission
     print_success "Docker 权限检查通过"
+
+    # Detect and set Docker Compose command
+    detect_compose_command
 
     # Check OpenSSL
     if ! command_exists openssl; then
@@ -296,7 +305,7 @@ pull_images() {
     print_info "正在拉取 Docker 镜像..."
 
     cd "$INSTALL_DIR"
-    docker compose pull
+    $COMPOSE_CMD pull
 
     print_success "Docker 镜像拉取完成"
 }
@@ -306,11 +315,11 @@ start_services() {
     print_info "正在启动服务..."
 
     cd "$INSTALL_DIR"
-    if docker compose up -d; then
+    if $COMPOSE_CMD up -d; then
         print_success "服务启动成功"
     else
         print_error "服务启动失败"
-        print_info "查看日志: cd $INSTALL_DIR && docker compose logs"
+        print_info "查看日志: cd $INSTALL_DIR && $COMPOSE_CMD logs"
         exit 1
     fi
 }
@@ -320,7 +329,7 @@ stop_services() {
     print_info "正在停止服务..."
 
     cd "$INSTALL_DIR"
-    docker compose down
+    $COMPOSE_CMD down
 
     print_success "服务停止成功"
 }
@@ -337,13 +346,13 @@ show_status() {
     echo ""
     print_info "服务状态:"
     cd "$INSTALL_DIR"
-    docker compose ps
+    $COMPOSE_CMD ps
     echo ""
     print_info "常用命令:"
-    echo "  启动服务:   cd $INSTALL_DIR && docker compose up -d"
-    echo "  停止服务:   cd $INSTALL_DIR && docker compose down"
-    echo "  查看日志:   cd $INSTALL_DIR && docker compose logs -f"
-    echo "  重启服务:   cd $INSTALL_DIR && docker compose restart"
+    echo "  启动服务:   cd $INSTALL_DIR && $COMPOSE_CMD up -d"
+    echo "  停止服务:   cd $INSTALL_DIR && $COMPOSE_CMD down"
+    echo "  查看日志:   cd $INSTALL_DIR && $COMPOSE_CMD logs -f"
+    echo "  重启服务:   cd $INSTALL_DIR && $COMPOSE_CMD restart"
     echo "  升级服务:   curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash"
     echo ""
     print_warning "请等待 30-60 秒让应用完全启动"
