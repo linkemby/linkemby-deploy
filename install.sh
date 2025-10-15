@@ -331,6 +331,35 @@ download_configs() {
     print_success "配置文件下载完成"
 }
 
+# Create and set permissions for data directories
+setup_data_directories() {
+    print_info "正在创建数据目录并设置权限..."
+
+    local data_dirs=(
+        "$INSTALL_DIR/data/linkemby"
+        "$INSTALL_DIR/data/postgres"
+        "$INSTALL_DIR/data/redis"
+    )
+
+    for dir in "${data_dirs[@]}"; do
+        if [ ! -d "$dir" ]; then
+            mkdir -p "$dir"
+            print_success "创建目录: $dir"
+        else
+            print_info "目录已存在: $dir"
+        fi
+    done
+
+    # Set full permissions (777) for data directories to avoid Docker volume permission issues
+    if command -v chmod >/dev/null 2>&1; then
+        # Set directory permissions: rwxrwxrwx (777)
+        chmod -R 777 "$INSTALL_DIR/data" 2>/dev/null || true
+        print_success "权限设置完成 (777)"
+    else
+        print_warning "chmod 命令不可用，跳过权限设置"
+    fi
+}
+
 # Pull Docker images
 pull_images() {
     print_info "正在拉取 Docker 镜像..."
@@ -429,6 +458,9 @@ main() {
         # Create .env file
         create_env_file
 
+        # Setup data directories
+        setup_data_directories
+
         # Pull images
         pull_images
 
@@ -450,6 +482,9 @@ main() {
 
         # Download new docker-compose.yml only (preserve .env and secrets)
         download_configs "upgrade"
+
+        # Setup data directories (in case new directories are needed)
+        setup_data_directories
 
         # Pull new images
         pull_images
