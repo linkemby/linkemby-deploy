@@ -467,9 +467,29 @@ main() {
         # Upgrade mode
         MODE="upgrade"
 
-        print_warning "正在升级现有安装..."
-        print_info "您的 .env 配置和密钥将被完全保留"
-        print_info "仅更新 docker-compose.yml 配置文件"
+        print_warning "检测到现有安装，将执行升级操作"
+        print_info "升级内容："
+        print_info "  - 更新 docker-compose.yml 配置文件"
+        print_info "  - 拉取最新的 Docker 镜像"
+        print_info "  - 重启服务以应用更新"
+        echo ""
+        print_info "注意："
+        print_info "  - 您的 .env 配置和密钥将被完全保留"
+        print_info "  - 数据库和 Redis 数据不会受影响"
+        print_info "  - 服务将会短暂重启"
+        echo ""
+
+        # Ask for user confirmation
+        read -r -p "是否继续执行升级? (y/N): " confirm </dev/tty
+        confirm=${confirm:-N}
+
+        if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+            print_info "升级已取消"
+            exit 0
+        fi
+
+        echo ""
+        print_info "开始升级..."
 
         # Read NEXTAUTH_URL from existing .env for status display
         NEXTAUTH_URL=$(get_env_value "$INSTALL_DIR/.env" "NEXTAUTH_URL" "")
