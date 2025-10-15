@@ -21,7 +21,7 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 - ✅ 检测系统环境（Docker、Docker Compose）
 - ✅ 下载所需的配置文件
 - ✅ 自动生成安全密钥
-- ✅ 交互式配置（数据库密码、访问URL等）
+- ✅ 交互式配置（访问URL、端口设置等）
 - ✅ 拉取 Docker 镜像
 - ✅ 启动所有服务
 
@@ -34,8 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```
 
 升级时会：
-- ✅ 保留现有的 `.env` 配置文件
-- ✅ 更新 `docker compose.yml`
+- ✅ 保留现有的 `.env` 配置文件（包括端口设置）
+- ✅ 更新 `docker-compose.yml`
 - ✅ 拉取最新的 Docker 镜像
 - ✅ 重启服务
 

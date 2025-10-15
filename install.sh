@@ -214,10 +214,41 @@ interactive_config() {
         fi
     done
 
-    # Other configurations use defaults from existing .env or hardcoded values
-    LINKEMBY_PORT=${LINKEMBY_PORT:-$default_linkemby_port}
-    POSTGRES_PORT=${POSTGRES_PORT:-$default_postgres_port}
-    REDIS_PORT=${REDIS_PORT:-$default_redis_port}
+    # LinkEmby Port
+    while true; do
+        read -r -p "请输入 LinkEmby 端口 (回车使用默认值 $default_linkemby_port): " LINKEMBY_PORT </dev/tty
+        LINKEMBY_PORT=${LINKEMBY_PORT:-$default_linkemby_port}
+
+        if [[ "$LINKEMBY_PORT" =~ ^[0-9]+$ ]] && [ "$LINKEMBY_PORT" -ge 1 ] && [ "$LINKEMBY_PORT" -le 65535 ]; then
+            break
+        else
+            print_error "端口号必须是 1-65535 之间的数字"
+        fi
+    done
+
+    # PostgreSQL Port
+    while true; do
+        read -r -p "请输入 PostgreSQL 端口 (回车使用默认值 $default_postgres_port): " POSTGRES_PORT </dev/tty
+        POSTGRES_PORT=${POSTGRES_PORT:-$default_postgres_port}
+
+        if [[ "$POSTGRES_PORT" =~ ^[0-9]+$ ]] && [ "$POSTGRES_PORT" -ge 1 ] && [ "$POSTGRES_PORT" -le 65535 ]; then
+            break
+        else
+            print_error "端口号必须是 1-65535 之间的数字"
+        fi
+    done
+
+    # Redis Port
+    while true; do
+        read -r -p "请输入 Redis 端口 (回车使用默认值 $default_redis_port): " REDIS_PORT </dev/tty
+        REDIS_PORT=${REDIS_PORT:-$default_redis_port}
+
+        if [[ "$REDIS_PORT" =~ ^[0-9]+$ ]] && [ "$REDIS_PORT" -ge 1 ] && [ "$REDIS_PORT" -le 65535 ]; then
+            break
+        else
+            print_error "端口号必须是 1-65535 之间的数字"
+        fi
+    done
 
     echo ""
 }

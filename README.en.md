@@ -21,7 +21,7 @@ The installation script will automatically:
 - ✅ Check system requirements (Docker, Docker Compose)
 - ✅ Download required configuration files
 - ✅ Generate security keys automatically
-- ✅ Interactive configuration (database password, access URL, etc.)
+- ✅ Interactive configuration (access URL, port settings, etc.)
 - ✅ Pull Docker images
 - ✅ Start all services
 
@@ -34,8 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```
 
 During upgrade:
-- ✅ Preserves existing `.env` configuration
-- ✅ Updates `docker compose.yml`
+- ✅ Preserves existing `.env` configuration (including port settings)
+- ✅ Updates `docker-compose.yml`
 - ✅ Pulls latest Docker images
 - ✅ Restarts services
 
