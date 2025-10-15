@@ -271,21 +271,25 @@ create_env_file() {
 POSTGRES_USER=linkemby
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 POSTGRES_DB=linkemby
-POSTGRES_PORT=${POSTGRES_PORT}
-DATABASE_URL=postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@postgres:\${POSTGRES_PORT}/\${POSTGRES_DB}
+DATABASE_URL=postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@postgres:5432/\${POSTGRES_DB}
 
 # --------------------------------------------
 # Redis Configuration
 # --------------------------------------------
 REDIS_PASSWORD=${REDIS_PASSWORD}
+REDIS_URL=redis://:\${REDIS_PASSWORD}@redis:6379
+
+# --------------------------------------------
+# Docker Port Configuration
+# --------------------------------------------
+POSTGRES_PORT=${POSTGRES_PORT}
 REDIS_PORT=${REDIS_PORT}
-REDIS_URL=redis://:\${REDIS_PASSWORD}@redis:\${REDIS_PORT}
+LINKEMBY_PORT=${LINKEMBY_PORT}
 
 # --------------------------------------------
 # Application Configuration
 # --------------------------------------------
 NEXTAUTH_URL=${NEXTAUTH_URL}
-LINKEMBY_PORT=${LINKEMBY_PORT}
 NODE_ENV=production
 NEXT_TELEMETRY_DISABLED=1
 
