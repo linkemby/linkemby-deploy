@@ -10,8 +10,21 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-DEFAULT_INSTALL_DIR="/opt/linkemby"
 REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
+
+# Detect default installation directory based on OS and user
+detect_default_install_dir() {
+    # Check if running as root
+    if [ "$EUID" -eq 0 ] || [ "$(id -u)" -eq 0 ]; then
+        # Running as root, use /opt/linkemby
+        echo "/opt/linkemby"
+    else
+        # Running as normal user, use ~/linkemby
+        echo "$HOME/linkemby"
+    fi
+}
+
+DEFAULT_INSTALL_DIR=$(detect_default_install_dir)
 
 # Print colored message
 print_message() {
