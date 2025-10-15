@@ -34,7 +34,9 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```
 
 升级时会：
-- ✅ 保留现有的 `.env` 配置文件（包括端口设置）
+- ✅ 交互式重新配置访问地址和端口（会覆盖现有配置）
+- ✅ 保留所有安全密钥和数据库密码
+- ✅ 自动备份原 `.env` 文件
 - ✅ 更新 `docker-compose.yml`
 - ✅ 拉取最新的 Docker 镜像
 - ✅ 重启服务

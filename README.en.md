@@ -34,7 +34,9 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```
 
 During upgrade:
-- ✅ Preserves existing `.env` configuration (including port settings)
+- ✅ Interactive reconfiguration of access URL and ports (overwrites existing configuration)
+- ✅ Preserves all security keys and database passwords
+- ✅ Automatically backs up original `.env` file
 - ✅ Updates `docker-compose.yml`
 - ✅ Pulls latest Docker images
 - ✅ Restarts services

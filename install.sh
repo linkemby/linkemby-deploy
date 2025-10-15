@@ -480,14 +480,9 @@ main() {
         # Upgrade mode
         MODE="upgrade"
 
-        print_warning "检测到现有安装，将执行升级操作"
-        print_info "升级内容："
-        print_info "  - 更新 docker-compose.yml 配置文件"
-        print_info "  - 拉取最新的 Docker 镜像"
-        print_info "  - 重启服务以应用更新"
-        echo ""
-        print_info "注意："
-        print_info "  - 您的 .env 配置和密钥将被完全保留"
+        print_warning "即将开始升级操作，请注意："
+        print_info "  - 你可以重新配置访问地址和端口(覆盖现有配置)"
+        print_info "  - 安全密钥(NEXTAUTH_SECRET, ENCRYPTION_KEY 等)将被保留"
         print_info "  - 数据库和 Redis 数据不会受影响"
         print_info "  - 服务将会短暂重启"
         echo ""
@@ -504,11 +499,55 @@ main() {
         echo ""
         print_info "开始升级..."
 
-        # Read NEXTAUTH_URL from existing .env for status display
-        NEXTAUTH_URL=$(get_env_value "$INSTALL_DIR/.env" "NEXTAUTH_URL" "")
+        # Preserve existing secrets from .env file
+        local env_file="$INSTALL_DIR/.env"
+        NEXTAUTH_SECRET=$(get_env_value "$env_file" "NEXTAUTH_SECRET" "")
+        ENCRYPTION_KEY=$(get_env_value "$env_file" "ENCRYPTION_KEY" "")
+        ENCRYPTION_IV=$(get_env_value "$env_file" "ENCRYPTION_IV" "")
+        CRON_SECRET=$(get_env_value "$env_file" "CRON_SECRET" "")
+        POSTGRES_PASSWORD=$(get_env_value "$env_file" "POSTGRES_PASSWORD" "")
+        REDIS_PASSWORD=$(get_env_value "$env_file" "REDIS_PASSWORD" "")
 
-        # Download new docker-compose.yml only (preserve .env and secrets)
+        # If any secrets are missing, generate new ones
+        if [ -z "$NEXTAUTH_SECRET" ]; then
+            print_warning "NEXTAUTH_SECRET 未找到，生成新密钥"
+            NEXTAUTH_SECRET=$(generate_base64)
+        fi
+        if [ -z "$ENCRYPTION_KEY" ]; then
+            print_warning "ENCRYPTION_KEY 未找到，生成新密钥"
+            ENCRYPTION_KEY=$(generate_hex 32)
+        fi
+        if [ -z "$ENCRYPTION_IV" ]; then
+            print_warning "ENCRYPTION_IV 未找到，生成新密钥"
+            ENCRYPTION_IV=$(generate_hex 16)
+        fi
+        if [ -z "$CRON_SECRET" ]; then
+            print_warning "CRON_SECRET 未找到，生成新密钥"
+            CRON_SECRET=$(generate_base64)
+        fi
+        if [ -z "$POSTGRES_PASSWORD" ]; then
+            print_warning "POSTGRES_PASSWORD 未找到，生成新密码"
+            POSTGRES_PASSWORD=$(generate_base64 | tr -d '/+=' | cut -c1-32)
+        fi
+        if [ -z "$REDIS_PASSWORD" ]; then
+            print_warning "REDIS_PASSWORD 未找到，生成新密码"
+            REDIS_PASSWORD=$(generate_base64 | tr -d '/+=' | cut -c1-32)
+        fi
+
+        # Interactive configuration (will read existing values as defaults)
+        interactive_config
+
+        # Backup existing .env file
+        if [ -f "$env_file" ]; then
+            cp "$env_file" "${env_file}.backup.$(date +%Y%m%d_%H%M%S)"
+            print_success ".env 文件已备份"
+        fi
+
+        # Download new docker-compose.yml
         download_configs "upgrade"
+
+        # Create new .env file with updated configuration but preserved secrets
+        create_env_file
 
         # Setup data directories (in case new directories are needed)
         setup_data_directories
