@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
-CACHE_FILE="/tmp/linkemby"
+CACHE_FILE="$HOME/.linkemby"
 
 # Detect default installation directory based on OS and user
 detect_default_install_dir() {
