@@ -22,6 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 - ✅ 下载所需的配置文件
 - ✅ 自动生成安全密钥
 - ✅ 交互式配置（访问URL、端口设置等）
+- ✅ 缓存安装路径到 `/tmp/linkemby`（下次安装时自动使用）
 - ✅ 拉取 Docker 镜像
 - ✅ 启动所有服务
 

@@ -11,6 +11,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
+CACHE_FILE="/tmp/linkemby"
 
 # Detect default installation directory based on OS and user
 detect_default_install_dir() {
@@ -24,7 +25,36 @@ detect_default_install_dir() {
     fi
 }
 
-DEFAULT_INSTALL_DIR=$(detect_default_install_dir)
+# Get cached installation directory
+get_cached_install_dir() {
+    if [ -f "$CACHE_FILE" ]; then
+        local cached_path=$(cat "$CACHE_FILE" 2>/dev/null)
+        # Verify the cached path exists
+        if [ -n "$cached_path" ] && [ -d "$cached_path" ]; then
+            echo "$cached_path"
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# Save installation directory to cache
+save_install_dir_cache() {
+    local install_dir=$1
+    echo "$install_dir" > "$CACHE_FILE" 2>/dev/null || true
+}
+
+# Get default installation directory (cached path takes priority)
+get_default_install_dir() {
+    local cached_dir
+    if cached_dir=$(get_cached_install_dir); then
+        echo "$cached_dir"
+    else
+        detect_default_install_dir
+    fi
+}
+
+DEFAULT_INSTALL_DIR=$(get_default_install_dir)
 
 # Print colored message
 print_message() {
@@ -443,6 +473,10 @@ main() {
     print_info "=== 安装目录配置 ==="
     read -r -p "请输入安装目录 (回车使用默认值 $DEFAULT_INSTALL_DIR): " INSTALL_DIR </dev/tty
     INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
+
+    # Save the installation directory to cache for future use
+    save_install_dir_cache "$INSTALL_DIR"
+
     echo ""
 
     # Detect mode based on the specified directory

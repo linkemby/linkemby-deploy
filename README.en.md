@@ -22,6 +22,7 @@ The installation script will automatically:
 - ✅ Download required configuration files
 - ✅ Generate security keys automatically
 - ✅ Interactive configuration (access URL, port settings, etc.)
+- ✅ Cache installation path to `/tmp/linkemby` (auto-used on next installation)
 - ✅ Pull Docker images
 - ✅ Start all services
 
