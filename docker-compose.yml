@@ -4,6 +4,7 @@ services:
     container_name: linkemby
     restart: unless-stopped
     environment:
+      TZ: ${TZ:-Asia/Shanghai}
       DATABASE_URL: ${DATABASE_URL}
       REDIS_URL: ${REDIS_URL}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
@@ -43,6 +44,7 @@ services:
     container_name: linkemby-postgres
     restart: unless-stopped
     environment:
+      TZ: ${TZ:-Asia/Shanghai}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -62,6 +64,8 @@ services:
     image: redis:7-alpine
     container_name: linkemby-redis
     restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -80,6 +84,7 @@ services:
     container_name: linkemby-cron
     restart: unless-stopped
     environment:
+      TZ: ${TZ:-Asia/Shanghai}
       STARTUP_CONDITION: 'curl -sSf http://linkemby:3000/api/health &> /dev/null'
       CRON_JOB_EXPIRY_REMINDER: '0 9 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/expiry-reminder'
       CRON_JOB_SUBSCRIPTION_SYNC: '0 * * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/subscription-sync'
