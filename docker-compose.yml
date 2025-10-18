@@ -87,10 +87,10 @@ services:
       TZ: ${TZ:-Asia/Shanghai}
       STARTUP_CONDITION: 'curl -sSf http://linkemby:3000/api/health &> /dev/null'
       CRON_JOB_EXPIRY_REMINDER: '0 9 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/expiry-reminder'
-      CRON_JOB_SUBSCRIPTION_SYNC: '0 * * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/subscription-sync'
+      CRON_JOB_SUBSCRIPTION_SYNC: '30 0 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/subscription-sync'
       CRON_JOB_CANCEL_UNPAID: '* * * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/cancel-unpaid-orders'
       CRON_JOB_CACHE_CLEANUP: '0 2 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/cache-cleanup'
-      CRON_JOB_USER_STATUS: '0 3 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/user-status-check'
+      # CRON_JOB_USER_STATUS: '0 3 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/user-status-check'
       CRON_JOB_EMBY_HEALTH: '*/5 * * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/emby-health-check'
     depends_on:
       linkemby:
