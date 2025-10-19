@@ -65,6 +65,16 @@ During upgrade:
 
 ---
 
+## 💡 Free Version Limitations
+
+**Free version restrictions:**
+- Maximum **10 users**
+- Maximum **1 Emby server**
+
+To remove these limitations, please purchase a license. See [Contact Us](#-contact-us) section below.
+
+---
+
 ## 🔧 Manual Installation
 
 If you prefer manual installation:
@@ -199,6 +209,15 @@ docker compose up -d
 | `LOG_LEVEL` | Log level | error, warn, info, debug |
 | `LOG_TO_FILE` | Write to file | true, false |
 | `LOG_FILE_PATH` | Log path | /app/data/logs |
+
+---
+
+## 📞 Contact Us
+
+For purchasing licenses or technical support, please contact us:
+
+- **Email**: umbras.hallows.0p@icloud.com
+- **WeChat**: berlin_lab
 
 ---
 
