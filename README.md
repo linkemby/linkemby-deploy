@@ -54,6 +54,7 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 
 如需购买授权许可或技术支持，请通过以下方式联系：
 
+- **Telegram**: [@berlin_lab](https://t.me/berlin_lab)
 - **邮箱**: umbras.hallows.0p@icloud.com
 - **微信**: berlin_lab
 
