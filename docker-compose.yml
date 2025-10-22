@@ -40,7 +40,7 @@ services:
       retries: 3
 
   postgres:
-    image: postgres:17-alpine
+    image: pgvector/pgvector:pg17
     container_name: linkemby-postgres
     restart: unless-stopped
     environment:
