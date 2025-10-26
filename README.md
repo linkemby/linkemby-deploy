@@ -13,9 +13,21 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
 
-[快速开始](#-快速开始) · [核心功能](#-核心功能) · [系统要求](#-系统要求) · [联系我们](#-联系我们)
+[在线体验](#-在线体验) · [快速开始](#-快速开始) · [核心功能](#-核心功能) · [系统要求](#-系统要求) · [联系我们](#-联系我们)
 
 </div>
+
+---
+
+## 🎯 在线体验
+
+**体验地址**: [https://linkemby.gz.mk](https://linkemby.gz.mk)
+
+**默认账号**:
+- 用户名: `admin`
+- 密码: `password123`
+
+> 💡 体验环境仅供测试使用，请勿存储重要数据。数据可能会被定期重置。
 
 ---
 
@@ -23,8 +35,12 @@
 
 <table>
 <tr>
-<td width="120"><b>🔹 Telegram</b></td>
-<td><a href="https://t.me/berlin_lab">@berlin_lab</a></td>
+<td width="120"><b>🔹 TG 频道</b></td>
+<td><a href="https://t.me/linkemby">@linkemby</a></td>
+</tr>
+<tr>
+<td width="120"><b>🔹 TG 群组</b></td>
+<td><a href="https://t.me/linkemby_chat">@linkemby_chat</a></td>
 </tr>
 <tr>
 <td><b>🔹 邮箱</b></td>
