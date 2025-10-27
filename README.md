@@ -175,6 +175,21 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 - ✅ 拉取最新的 Docker 镜像
 - ✅ 重启服务
 
+### 国内加速配置
+
+如果在中国大陆网络环境执行安装/升级，可先配置加速源环境变量：
+
+```bash
+export GH_PROXY="https://ghfast.top/"
+export GHCR_PROXY="ghcr.nju.edu.cn"
+curl -fsSL "${GH_PROXY}https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh" | bash
+```
+
+- `GH_PROXY` 会在脚本内部自动拼接到所有 GitHub RAW 下载链接前，实现安装脚本及配置文件的加速。
+- `GHCR_PROXY` 会在生成的 `docker-compose.yml` 中替换 `ghcr.io` 域名，适配常见的镜像加速服务。
+
+如无需加速，可直接省略上述两个环境变量。
+
 ---
 
 ## 📋 系统要求

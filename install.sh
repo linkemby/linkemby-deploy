@@ -10,7 +10,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
+GH_PROXY="${GH_PROXY:-}"
+GHCR_PROXY="${GHCR_PROXY:-}"
+GITHUB_RAW_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
+REPO_BASE_URL="${GH_PROXY}${GITHUB_RAW_BASE_URL}"
+INSTALL_SCRIPT_URL="${GH_PROXY}${GITHUB_RAW_BASE_URL}/install.sh"
 CACHE_FILE="$HOME/.linkemby"
 
 # Detect default installation directory based on OS and user
@@ -373,7 +377,21 @@ download_configs() {
     local mode=$1
     print_info "正在下载配置文件..."
 
-    download_file "docker-compose.yml" "$INSTALL_DIR/docker-compose.yml"
+    local compose_file="$INSTALL_DIR/docker-compose.yml"
+    download_file "docker-compose.yml" "$compose_file"
+
+    if [ -n "$GHCR_PROXY" ]; then
+        if grep -q "ghcr.io" "$compose_file" 2>/dev/null; then
+            local tmp_file="${compose_file}.tmp"
+            local escaped_proxy=${GHCR_PROXY//\\/\\\\}
+            escaped_proxy=${escaped_proxy//&/\\&}
+            sed "s#ghcr\\.io#${escaped_proxy}#g" "$compose_file" > "$tmp_file"
+            mv "$tmp_file" "$compose_file"
+            print_success "已将 ghcr.io 替换为 ${GHCR_PROXY}"
+        else
+            print_warning "未在 docker-compose.yml 中找到 ghcr.io 域名"
+        fi
+    fi
 
     # Only download .env.example in fresh installation mode
     if [ "$mode" = "install" ] && [ ! -f "$INSTALL_DIR/.env.example" ]; then
@@ -455,7 +473,7 @@ show_status() {
     echo "  停止服务:   cd $INSTALL_DIR && $COMPOSE_CMD down"
     echo "  查看日志:   cd $INSTALL_DIR && $COMPOSE_CMD logs -f"
     echo "  重启服务:   cd $INSTALL_DIR && $COMPOSE_CMD restart"
-    echo "  升级服务:   curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash"
+    echo "  升级服务:   curl -fsSL ${INSTALL_SCRIPT_URL} | bash"
     echo ""
     print_warning "请等待 30-60 秒让应用完全启动"
     print_info "然后访问: $NEXTAUTH_URL"
