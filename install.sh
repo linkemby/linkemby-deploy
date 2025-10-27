@@ -508,8 +508,6 @@ show_status() {
     print_info "安装目录: $INSTALL_DIR"
     print_info "访问地址: $NEXTAUTH_URL"
     echo ""
-    print_warning "⚠️  重要提示: 进入系统注册的第一个用户将成为管理员账号！"
-    echo ""
     print_info "服务状态:"
     cd "$INSTALL_DIR"
     $COMPOSE_CMD ps
@@ -523,6 +521,8 @@ show_status() {
     echo ""
     print_warning "请等待 30-60 秒让应用完全启动"
     print_info "然后访问: $NEXTAUTH_URL"
+    echo ""
+    print_warning "⚠️  重要提示: 进入系统注册的第一个用户将成为管理员账号"
     echo ""
 }
 
