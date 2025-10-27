@@ -182,13 +182,17 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```bash
 export GH_PROXY="https://ghfast.top/"
 export GHCR_PROXY="ghcr.nju.edu.cn"
+export DOCKER_PROXY="docker.m.daocloud.io"
 curl -fsSL "${GH_PROXY}https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh" | bash
 ```
 
-- `GH_PROXY` 会在脚本内部自动拼接到所有 GitHub RAW 下载链接前，实现安装脚本及配置文件的加速。
-- `GHCR_PROXY` 会在生成的 `docker-compose.yml` 中替换 `ghcr.io` 域名，适配常见的镜像加速服务。
+**加速源说明：**
 
-如无需加速，可直接省略上述两个环境变量。
+- `GH_PROXY` - GitHub RAW 文件加速，用于下载安装脚本和配置文件
+- `GHCR_PROXY` - GitHub Container Registry 镜像加速，用于拉取 linkemby 和 cron 镜像
+- `DOCKER_PROXY` - Docker Hub 镜像加速，用于拉取 Redis 和 PostgreSQL 镜像
+
+如无需加速，可直接省略上述环境变量。
 
 ---
 

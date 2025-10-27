@@ -12,6 +12,7 @@ NC='\033[0m' # No Color
 # Configuration
 GH_PROXY="${GH_PROXY:-}"
 GHCR_PROXY="${GHCR_PROXY:-}"
+DOCKER_PROXY="${DOCKER_PROXY:-}"
 GITHUB_RAW_BASE_URL="https://raw.githubusercontent.com/linkemby/linkemby-deploy/main"
 REPO_BASE_URL="${GH_PROXY}${GITHUB_RAW_BASE_URL}"
 INSTALL_SCRIPT_URL="${GH_PROXY}${GITHUB_RAW_BASE_URL}/install.sh"
@@ -311,6 +312,12 @@ create_env_file() {
 # LinkEmby Environment Configuration
 # Generated on $(date)
 # ============================================
+
+# --------------------------------------------
+# Docker Configuration
+# --------------------------------------------
+DOCKER_PROXY=${DOCKER_PROXY:-docker.io}
+GHCR_PROXY=${GHCR_PROXY:-ghcr.io}
 
 # --------------------------------------------
 # Timezone Configuration

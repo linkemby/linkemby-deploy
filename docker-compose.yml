@@ -1,6 +1,6 @@
 services:
   linkemby:
-    image: ghcr.io/linkemby/linkemby:v0.1.9
+    image: ${GHCR_PROXY:-ghcr.io}/linkemby/linkemby:v0.1.9
     container_name: linkemby
     restart: unless-stopped
     environment:
@@ -61,7 +61,7 @@ services:
       - linkemby
 
   redis:
-    image: redis:7-alpine
+    image: ${DOCKER_PROXY:-docker.io}/redis:7-alpine
     container_name: linkemby-redis
     restart: unless-stopped
     environment:
@@ -80,7 +80,7 @@ services:
       - linkemby
 
   cron:
-    image: ghcr.io/monlor/docker-cron:main
+    image: ${GHCR_PROXY:-ghcr.io}/monlor/docker-cron:main
     container_name: linkemby-cron
     restart: unless-stopped
     environment:
