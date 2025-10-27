@@ -148,7 +148,8 @@
 curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
-安装脚本将自动完成：
+<details>
+<summary>📋 安装脚本将自动完成以下操作（点击展开）</summary>
 
 - ✅ 检测系统环境（Docker、Docker Compose）
 - ✅ 下载所需的配置文件
@@ -158,6 +159,8 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 - ✅ 拉取 Docker 镜像
 - ✅ 启动所有服务
 
+</details>
+
 ### 升级
 
 重新运行安装脚本即可升级：
@@ -166,14 +169,37 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh | bash
 ```
 
-升级过程中会：
+<details>
+<summary>📋 升级过程说明（点击展开）</summary>
 
 - ✅ 交互式重新配置访问地址和端口（覆盖现有配置）
 - ✅ 保留所有安全密钥和数据库密码
-- ✅ 自动备份原 `.env` 文件
 - ✅ 更新 `docker-compose.yml`
 - ✅ 拉取最新的 Docker 镜像
 - ✅ 重启服务
+
+</details>
+
+### 卸载
+
+运行卸载脚本：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/uninstall.sh | bash
+```
+
+<details>
+<summary>📋 卸载选项说明（点击展开）</summary>
+
+卸载脚本提供三种卸载选项：
+
+1. **仅停止服务** - 保留所有数据和配置文件
+2. **停止服务并删除数据** - 删除数据库、Redis 等数据，但保留配置文件
+3. **完全卸载** - 删除所有文件、数据和缓存
+
+> 💡 卸载脚本会自动从缓存读取安装目录，无需手动指定
+
+</details>
 
 ### 国内加速配置
 

@@ -601,12 +601,6 @@ main() {
         # Interactive configuration (will read existing values as defaults)
         interactive_config
 
-        # Backup existing .env file
-        if [ -f "$env_file" ]; then
-            cp "$env_file" "${env_file}.backup.$(date +%Y%m%d_%H%M%S)"
-            print_success ".env 文件已备份"
-        fi
-
         # Download new docker-compose.yml
         download_configs "upgrade"
 
