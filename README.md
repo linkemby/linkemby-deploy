@@ -149,6 +149,15 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```
 
 <details>
+<summary>🌏 国内用户加速（点击展开）</summary>
+
+```bash
+curl -fsSL "https://ghfast.top/https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh" | bash
+```
+
+</details>
+
+<details>
 <summary>📋 安装脚本将自动完成以下操作（点击展开）</summary>
 
 - ✅ 检测系统环境（Docker、Docker Compose）
@@ -170,6 +179,15 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/insta
 ```
 
 <details>
+<summary>🌏 国内用户加速（点击展开）</summary>
+
+```bash
+curl -fsSL "https://ghfast.top/https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh" | bash
+```
+
+</details>
+
+<details>
 <summary>📋 升级过程说明（点击展开）</summary>
 
 - ✅ 交互式重新配置访问地址和端口（覆盖现有配置）
@@ -189,6 +207,15 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/unins
 ```
 
 <details>
+<summary>🌏 国内用户加速（点击展开）</summary>
+
+```bash
+curl -fsSL "https://ghfast.top/https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/uninstall.sh" | bash
+```
+
+</details>
+
+<details>
 <summary>📋 卸载选项说明（点击展开）</summary>
 
 卸载脚本提供三种卸载选项：
@@ -200,25 +227,6 @@ curl -fsSL https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/unins
 > 💡 卸载脚本会自动从缓存读取安装目录，无需手动指定
 
 </details>
-
-### 国内加速配置
-
-如果在中国大陆网络环境执行安装/升级，可先配置加速源环境变量：
-
-```bash
-export GH_PROXY="https://ghfast.top/"
-export GHCR_PROXY="ghcr.nju.edu.cn"
-export DOCKER_PROXY="docker.m.daocloud.io"
-curl -fsSL "${GH_PROXY}https://raw.githubusercontent.com/linkemby/linkemby-deploy/main/install.sh" | bash
-```
-
-**加速源说明：**
-
-- `GH_PROXY` - GitHub RAW 文件加速，用于下载安装脚本和配置文件
-- `GHCR_PROXY` - GitHub Container Registry 镜像加速，用于拉取 linkemby 和 cron 镜像
-- `DOCKER_PROXY` - Docker Hub 镜像加速，用于拉取 Redis 和 PostgreSQL 镜像
-
-如无需加速，可直接省略上述环境变量。
 
 ---
 
