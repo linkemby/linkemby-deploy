@@ -40,7 +40,7 @@ services:
       retries: 3
 
   postgres:
-    image: pgvector/pgvector:pg17
+    image: ${DOCKER_PROXY:-docker.io}/pgvector/pgvector:pg17
     container_name: linkemby-postgres
     restart: unless-stopped
     environment:

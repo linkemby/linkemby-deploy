@@ -387,19 +387,6 @@ download_configs() {
     local compose_file="$INSTALL_DIR/docker-compose.yml"
     download_file "docker-compose.yml" "$compose_file"
 
-    if [ -n "$GHCR_PROXY" ]; then
-        if grep -q "ghcr.io" "$compose_file" 2>/dev/null; then
-            local tmp_file="${compose_file}.tmp"
-            local escaped_proxy=${GHCR_PROXY//\\/\\\\}
-            escaped_proxy=${escaped_proxy//&/\\&}
-            sed "s#ghcr\\.io#${escaped_proxy}#g" "$compose_file" > "$tmp_file"
-            mv "$tmp_file" "$compose_file"
-            print_success "已将 ghcr.io 替换为 ${GHCR_PROXY}"
-        else
-            print_warning "未在 docker-compose.yml 中找到 ghcr.io 域名"
-        fi
-    fi
-
     # Only download .env.example in fresh installation mode
     if [ "$mode" = "install" ] && [ ! -f "$INSTALL_DIR/.env.example" ]; then
         download_file ".env.example" "$INSTALL_DIR/.env.example"
