@@ -232,6 +232,43 @@ validate_url() {
     return 0
 }
 
+# Interactive mirror selection
+interactive_mirror_selection() {
+    echo ""
+    print_info "=== 镜像源配置 ==="
+    echo ""
+    print_info "请选择镜像源 (Select mirror source):"
+    echo "  1) 官方源 (Official) - docker.io / ghcr.io [推荐海外用户 / Recommended for overseas users]"
+    echo "  2) 国内加速源 (CN Mirror) - docker.m.daocloud.io / ghcr.nju.edu.cn [推荐国内用户 / Recommended for CN users]"
+    echo ""
+
+    while true; do
+        read -r -p "请输入选项 (1-2, 回车使用默认值 1): " mirror_choice </dev/tty
+        mirror_choice=${mirror_choice:-1}
+
+        case "$mirror_choice" in
+            1)
+                DOCKER_PROXY="docker.io"
+                GHCR_PROXY="ghcr.io"
+                GH_PROXY=""
+                print_success "已选择官方源"
+                break
+                ;;
+            2)
+                DOCKER_PROXY="docker.m.daocloud.io"
+                GHCR_PROXY="ghcr.nju.edu.cn"
+                GH_PROXY="https://ghfast.top/"
+                print_success "已选择国内加速源"
+                break
+                ;;
+            *)
+                print_error "无效选项，请输入 1 或 2"
+                ;;
+        esac
+    done
+    echo ""
+}
+
 # Interactive configuration
 interactive_config() {
     echo ""
@@ -301,6 +338,18 @@ interactive_config() {
     echo ""
 }
 
+# Backup existing .env file
+backup_env_file() {
+    local env_file="$INSTALL_DIR/.env"
+    local backup_file="$INSTALL_DIR/.env.bak"
+
+    if [ -f "$env_file" ]; then
+        print_info "正在备份现有配置文件..."
+        cp "$env_file" "$backup_file"
+        print_success "配置文件已备份到 .env.bak"
+    fi
+}
+
 # Create .env file
 create_env_file() {
     local env_file="$INSTALL_DIR/.env"
@@ -316,6 +365,7 @@ create_env_file() {
 # --------------------------------------------
 # Docker Configuration
 # --------------------------------------------
+GH_PROXY=${GH_PROXY:-}
 DOCKER_PROXY=${DOCKER_PROXY:-docker.io}
 GHCR_PROXY=${GHCR_PROXY:-ghcr.io}
 
@@ -458,6 +508,8 @@ show_status() {
     print_info "安装目录: $INSTALL_DIR"
     print_info "访问地址: $NEXTAUTH_URL"
     echo ""
+    print_warning "⚠️  重要提示: 进入系统注册的第一个用户将成为管理员账号！"
+    echo ""
     print_info "服务状态:"
     cd "$INSTALL_DIR"
     $COMPOSE_CMD ps
@@ -500,6 +552,9 @@ main() {
     if detect_mode "$INSTALL_DIR"; then
         # Fresh installation
         MODE="install"
+
+        # Interactive mirror selection
+        interactive_mirror_selection
 
         # Generate secrets
         generate_secrets
@@ -550,6 +605,9 @@ main() {
         echo ""
         print_info "开始升级..."
 
+        # Interactive mirror selection for upgrade
+        interactive_mirror_selection
+
         # Preserve existing secrets from .env file
         local env_file="$INSTALL_DIR/.env"
         NEXTAUTH_SECRET=$(get_env_value "$env_file" "NEXTAUTH_SECRET" "")
@@ -590,6 +648,9 @@ main() {
 
         # Download new docker-compose.yml
         download_configs "upgrade"
+
+        # Backup existing .env file
+        backup_env_file
 
         # Create new .env file with updated configuration but preserved secrets
         create_env_file
