@@ -1,0 +1,27 @@
+LinkEmby v0.1.11 Release Notes
+
+Release Date: 2025-10-29
+
+🎉 New Features
+
+  • Lifetime Subscription Support: Users can now purchase lifetime subscriptions for permanent access without needing to renew periodically
+
+  • User Invitation System: Administrators can invite users to join the platform with automatic subscription assignment, streamlining the onboarding process
+
+  • Enhanced Card Code System: Improved card code redemption system with support for lifetime subscription card generation and better validation
+
+  • User Dashboard Enhancement: Improved dashboard display featuring invitation code information, card code redemption history, and Emby server status
+
+🔧 Refactoring & Optimization
+
+  • Payment System Improvement: Enhanced payment validation logic with better error handling and system stability
+
+  • Order Management Enhancement: Added order details retrieval functionality with improved data validation
+
+  • Emby Integration Optimization: Optimized Emby API calls with improved error handling and service reliability
+
+  • Code Quality Enhancement: Comprehensive JSDoc documentation, improved type definitions and validation logic for better maintainability
+
+  • System Settings Refactoring: Restructured system settings type definitions and improved UI components with better layout organization
+
+  • Dependency Updates: Added nanoid library for invitation code generation and optimized project dependency management
