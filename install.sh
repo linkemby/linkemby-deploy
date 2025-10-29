@@ -183,6 +183,104 @@ download_file() {
     fi
 }
 
+# Fetch and display changelog
+fetch_changelog() {
+    local to_version=$1
+
+    # Detect system language (fallback to Chinese)
+    local lang="zh"
+    if [ -n "$LANG" ]; then
+        if [[ "$LANG" =~ ^en ]]; then
+            lang="en"
+        fi
+    fi
+
+    # Try to fetch changelog from remote
+    local changelog_url="${REPO_BASE_URL}/changelog/${to_version}/changelog-${lang}.txt"
+
+    if command_exists curl; then
+        local changelog=$(curl -fsSL "$changelog_url" 2>/dev/null || echo "")
+        if [ -n "$changelog" ]; then
+            echo ""
+            print_info "=== 更新日志 | Changelog ==="
+            echo ""
+            echo "$changelog"
+            echo ""
+            return 0
+        fi
+    elif command_exists wget; then
+        local changelog=$(wget -qO- "$changelog_url" 2>/dev/null || echo "")
+        if [ -n "$changelog" ]; then
+            echo ""
+            print_info "=== 更新日志 | Changelog ==="
+            echo ""
+            echo "$changelog"
+            echo ""
+            return 0
+        fi
+    fi
+
+    return 1
+}
+
+# Check version update and display changelog
+check_version_update() {
+    local env_file="$INSTALL_DIR/.env"
+    local current_version=""
+    local latest_version=""
+
+    # Get current version from .env file (same way as other secrets)
+    if [ -f "$env_file" ]; then
+        current_version=$(get_env_value "$env_file" "LINKEMBY_VERSION" "")
+    fi
+
+    # Get latest version from remote latest file
+    if command_exists curl; then
+        latest_version=$(curl -fsSL "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
+    elif command_exists wget; then
+        latest_version=$(wget -qO- "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
+    fi
+
+    # If we couldn't fetch the latest version, skip version check
+    if [ -z "$latest_version" ]; then
+        print_warning "无法获取最新版本信息，跳过版本检查"
+        return 0
+    fi
+
+    echo ""
+    print_info "=== 版本更新检测 ==="
+    print_info "当前版本: ${current_version:-未知}"
+    print_info "最新版本: $latest_version"
+
+    # If versions are the same, skip
+    if [ -n "$current_version" ] && [ "$current_version" = "$latest_version" ]; then
+        print_success "已经是最新版本"
+        echo ""
+        return 0
+    fi
+
+    # Fetch and display changelog
+    fetch_changelog "$latest_version" || true
+
+    # Ask for confirmation
+    while true; do
+        read -r -p "是否继续更新到 $latest_version? (y/n): " confirm </dev/tty
+        case "$confirm" in
+            [Yy]*)
+                echo ""
+                return 0
+                ;;
+            [Nn]*)
+                print_info "已取消更新"
+                exit 0
+                ;;
+            *)
+                print_error "请输入 y 或 n"
+                ;;
+        esac
+    done
+}
+
 # Create installation directory
 create_install_dir() {
     print_info "正在创建安装目录: $INSTALL_DIR"
@@ -401,6 +499,7 @@ LINKEMBY_PORT=${LINKEMBY_PORT}
 NEXTAUTH_URL=${NEXTAUTH_URL}
 NODE_ENV=production
 NEXT_TELEMETRY_DISABLED=1
+LINKEMBY_VERSION=${LINKEMBY_VERSION}
 
 # --------------------------------------------
 # Security Keys (AUTO-GENERATED)
@@ -537,6 +636,20 @@ main() {
     # Check requirements
     check_requirements
 
+    # Get latest version from remote
+    LINKEMBY_VERSION=""
+    if command_exists curl; then
+        LINKEMBY_VERSION=$(curl -fsSL "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
+    elif command_exists wget; then
+        LINKEMBY_VERSION=$(wget -qO- "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
+    fi
+
+    if [ -z "$LINKEMBY_VERSION" ]; then
+        print_error "无法获取版本信息，请检查网络连接"
+        print_info "如果问题持续，请访问: https://github.com/linkemby/linkemby-deploy"
+        exit 1
+    fi
+
     # Get installation directory first
     echo ""
     print_info "=== 安装目录配置 ==="
@@ -586,6 +699,9 @@ main() {
         # Upgrade mode
         MODE="upgrade"
 
+        # Check version update and display changelog
+        check_version_update
+
         print_warning "即将开始升级操作，请注意："
         print_info "  - 你可以重新配置访问地址和端口(覆盖现有配置)"
         print_info "  - 安全密钥(NEXTAUTH_SECRET, ENCRYPTION_KEY 等)将被保留"
@@ -616,6 +732,8 @@ main() {
         CRON_SECRET=$(get_env_value "$env_file" "CRON_SECRET" "")
         POSTGRES_PASSWORD=$(get_env_value "$env_file" "POSTGRES_PASSWORD" "")
         REDIS_PASSWORD=$(get_env_value "$env_file" "REDIS_PASSWORD" "")
+
+        # LINKEMBY_VERSION will be updated to latest (already fetched at start)
 
         # If any secrets are missing, generate new ones
         if [ -z "$NEXTAUTH_SECRET" ]; then
