@@ -166,6 +166,67 @@ detect_mode() {
     fi
 }
 
+# Universal download function with proxy support
+# Usage: download_url <url> <output_file> [--silent]
+download_url() {
+    local url=$1
+    local output=$2
+    local silent=${3:-}
+
+    # Check if curl or wget is available
+    if ! command_exists curl && ! command_exists wget; then
+        print_error "curl 和 wget 都不可用，请先安装其中一个"
+        exit 1
+    fi
+
+    # Detect proxy settings from environment
+    local http_proxy_env="${http_proxy:-${HTTP_PROXY:-}}"
+    local https_proxy_env="${https_proxy:-${HTTPS_PROXY:-}}"
+    local no_proxy_env="${no_proxy:-${NO_PROXY:-}}"
+
+    # Download using curl (preferred)
+    if command_exists curl; then
+        local curl_opts="-fsSL"
+
+        # Add proxy options if set
+        if [ -n "$http_proxy_env" ]; then
+            curl_opts="$curl_opts --proxy $http_proxy_env"
+        fi
+        if [ -n "$https_proxy_env" ]; then
+            curl_opts="$curl_opts --proxy $https_proxy_env"
+        fi
+        if [ -n "$no_proxy_env" ]; then
+            curl_opts="$curl_opts --noproxy $no_proxy_env"
+        fi
+
+        # Execute download
+        if [ "$silent" = "--silent" ]; then
+            curl $curl_opts "$url" -o "$output" 2>/dev/null
+        else
+            curl $curl_opts "$url" -o "$output"
+        fi
+        return $?
+    fi
+
+    # Fallback to wget
+    if command_exists wget; then
+        local wget_opts="-q"
+
+        # wget automatically uses http_proxy, https_proxy, no_proxy environment variables
+        # No need to pass them explicitly
+
+        # Execute download
+        if [ "$silent" = "--silent" ]; then
+            wget $wget_opts "$url" -O "$output" 2>/dev/null
+        else
+            wget $wget_opts "$url" -O "$output"
+        fi
+        return $?
+    fi
+
+    return 1
+}
+
 # Download file from repository
 download_file() {
     local file=$1
@@ -173,13 +234,11 @@ download_file() {
     local url="${REPO_BASE_URL}/${file}"
 
     print_info "正在下载 $file..."
-    if command_exists curl; then
-        curl -fsSL "$url" -o "$dest"
-    elif command_exists wget; then
-        wget -q "$url" -O "$dest"
+    if download_url "$url" "$dest"; then
+        return 0
     else
-        print_error "curl 和 wget 都不可用，请先安装其中一个"
-        exit 1
+        print_error "下载失败: $file"
+        return 1
     fi
 }
 
@@ -197,9 +256,12 @@ fetch_changelog() {
 
     # Try to fetch changelog from remote
     local changelog_url="${REPO_BASE_URL}/changelog/${to_version}/changelog-${lang}.txt"
+    local temp_file=$(mktemp)
 
-    if command_exists curl; then
-        local changelog=$(curl -fsSL "$changelog_url" 2>/dev/null || echo "")
+    if download_url "$changelog_url" "$temp_file" "--silent"; then
+        local changelog=$(cat "$temp_file")
+        rm -f "$temp_file"
+
         if [ -n "$changelog" ]; then
             echo ""
             print_info "=== 更新日志 | Changelog ==="
@@ -208,16 +270,8 @@ fetch_changelog() {
             echo ""
             return 0
         fi
-    elif command_exists wget; then
-        local changelog=$(wget -qO- "$changelog_url" 2>/dev/null || echo "")
-        if [ -n "$changelog" ]; then
-            echo ""
-            print_info "=== 更新日志 | Changelog ==="
-            echo ""
-            echo "$changelog"
-            echo ""
-            return 0
-        fi
+    else
+        rm -f "$temp_file"
     fi
 
     return 1
@@ -235,10 +289,13 @@ check_version_update() {
     fi
 
     # Get latest version from remote latest file
-    if command_exists curl; then
-        latest_version=$(curl -fsSL "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
-    elif command_exists wget; then
-        latest_version=$(wget -qO- "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
+    local temp_file=$(mktemp)
+    if download_url "${REPO_BASE_URL}/latest" "$temp_file" "--silent"; then
+        latest_version=$(cat "$temp_file" | tr -d '[:space:]')
+        rm -f "$temp_file"
+    else
+        rm -f "$temp_file"
+        latest_version=""
     fi
 
     # If we couldn't fetch the latest version, skip version check
@@ -633,15 +690,24 @@ main() {
     print_info "==================================="
     echo ""
 
+    # Interactive mirror selection (first step)
+    interactive_mirror_selection
+
+    # Update repository URLs with selected mirror
+    REPO_BASE_URL="${GH_PROXY}${GITHUB_RAW_BASE_URL}"
+    INSTALL_SCRIPT_URL="${GH_PROXY}${GITHUB_RAW_BASE_URL}/install.sh"
+
     # Check requirements
     check_requirements
 
     # Get latest version from remote
     LINKEMBY_VERSION=""
-    if command_exists curl; then
-        LINKEMBY_VERSION=$(curl -fsSL "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
-    elif command_exists wget; then
-        LINKEMBY_VERSION=$(wget -qO- "${REPO_BASE_URL}/latest" 2>/dev/null | tr -d '[:space:]' || echo "")
+    local temp_file=$(mktemp)
+    if download_url "${REPO_BASE_URL}/latest" "$temp_file" "--silent"; then
+        LINKEMBY_VERSION=$(cat "$temp_file" | tr -d '[:space:]')
+        rm -f "$temp_file"
+    else
+        rm -f "$temp_file"
     fi
 
     if [ -z "$LINKEMBY_VERSION" ]; then
@@ -665,9 +731,6 @@ main() {
     if detect_mode "$INSTALL_DIR"; then
         # Fresh installation
         MODE="install"
-
-        # Interactive mirror selection
-        interactive_mirror_selection
 
         # Generate secrets
         generate_secrets
@@ -720,9 +783,6 @@ main() {
 
         echo ""
         print_info "开始升级..."
-
-        # Interactive mirror selection for upgrade
-        interactive_mirror_selection
 
         # Preserve existing secrets from .env file
         local env_file="$INSTALL_DIR/.env"
