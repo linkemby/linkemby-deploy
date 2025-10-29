@@ -1,6 +1,6 @@
 services:
   linkemby:
-    image: ${GHCR_PROXY:-ghcr.io}/linkemby/linkemby:v0.1.10
+    image: ${GHCR_PROXY:-ghcr.io}/linkemby/linkemby:${LINKEMBY_VERSION:-v0.1.10}
     container_name: linkemby
     restart: unless-stopped
     environment:
