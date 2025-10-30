@@ -570,7 +570,7 @@ CRON_SECRET=${CRON_SECRET}
 # Logging Configuration
 # --------------------------------------------
 LOG_LEVEL=info
-LOG_TO_FILE=false
+LOG_TO_FILE=true
 LOG_FILE_PATH=/app/data/logs
 
 # --------------------------------------------
