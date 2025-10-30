@@ -1,0 +1,23 @@
+LinkEmby v0.1.12 Release Notes
+
+Release Date: 2025-10-30
+
+🔧 Refactoring & Optimization
+
+  • Architecture Optimization: Refactored code architecture, optimized import structure, unified type definitions and configuration services
+  • System Performance: Improved logging system structure with caching mechanisms to enhance system response speed
+  • User Experience: Optimized media count display format and improved code organization structure
+
+🎉 New Features
+
+  • User Invitation System: Added user invitation functionality with time-limited invite links (12-hour expiry), up to 50 active invites per user
+  • Password Security: Implemented password complexity validation system with real-time password strength indicator
+  • User Avatars: Introduced colorful user avatar component with personalized generation based on user information
+  • Admin Log Viewer: New log viewer system supporting real-time log viewing and management
+  • License Management: Enhanced license validation requiring valid license for card code creation
+  • Release Process: Optimized release workflow with AI-assisted changelog generation
+
+🐛 Bug Fixes
+
+  • Sync Optimization: Improved logging for user sync to Emby with detailed sync process information
+  • Container Enhancement: Optimized Docker template synchronization to prevent overwriting user-customized email templates
