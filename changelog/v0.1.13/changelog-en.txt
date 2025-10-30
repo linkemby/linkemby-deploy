@@ -1,0 +1,15 @@
+LinkEmby v0.1.13 Release Notes
+
+Release Date: 2025-10-30
+
+🎉 New Features
+
+  • Email Notifications for Invitations: Automatically send invitation emails with subscription details and display delivery status in real-time, including plan name, validity period, and reward benefits
+
+  • Smart Verification Code Input: Auto-verify 6-digit codes upon completion, numeric-only validation with real-time filtering, countdown timer display during validity period, and input preservation on verification failure for easy correction
+
+  • Email Verification Rate Limiting: Maximum 10 verification codes per hour per email address, 3-minute resend cooldown to prevent duplicate sends, verification code expiry reduced to 3 minutes with improved error messages displaying remaining time
+
+🐛 Bug Fixes
+
+  • Enhanced User Data Logging: Improved error logging when users are not found, including userId, email, username and timestamp information, added database query details and operation context for better debugging of session-user mismatch scenarios
