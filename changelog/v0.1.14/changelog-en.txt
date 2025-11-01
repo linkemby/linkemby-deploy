@@ -1,0 +1,25 @@
+LinkEmby v0.1.14 Release Notes
+
+Release Date: 2025-11-01
+
+🔧 Refactoring & Optimization
+
+  • Server Actions Refactoring: Enhanced type safety and error handling across all operations with comprehensive type definitions, improved validation and error management in admin and user actions, unified response types, and improved code organization and maintainability
+
+  • UI Components Optimization: Enhanced data table component with improved action handling, improved responsive design and mobile layouts, optimized global CSS spacing utilities, and enhanced user dashboard and Emby service display
+
+  • Unified Markdown Rendering: Consolidated all markdown renderers into a single MarkdownRenderer component with HTML support enabled, reduced code duplication, and ensured consistent rendering across the entire application
+
+🎉 New Features
+
+  • On-Demand Media Request System: Implemented a complete media request-on-demand feature allowing users to browse latest movies and TV shows, discover trending content via TMDB integration, search and filter by media type, select TV series seasons, enable admin review workflow with status transitions, and automatic request processing based on subscription limits
+
+  • Subscription System Enhancement: Improved license manager error handling, added on-demand quota fields to subscription plans, implemented subscription plan modal improvements, added validation for subscription features and limits, and support for dynamic feature toggles per plan
+
+  • Global Proxy System: Implemented a comprehensive proxy system for external API requests supporting HTTP and SOCKS5 protocols, proxy authentication with credentials, Redis caching for proxy configuration with 5-minute TTL, seamless integration with TMDB and other external API calls, and flexible network access for external services
+
+  • User-Facing On-Demand Interface: Implemented complete user interface for on-demand features with media browsing and search functionality, request history tracking with status visualization, trending media discovery with weekly hot content, real-time quota management and usage statistics, media detail preview and request submission, ability to cancel pending requests and view admin notes, responsive poster wall grid layout, and full subscription plan integration
+
+🐛 Bug Fixes
+
+  • Demo Data Initialization: Improved demo data initialization script to preserve license code during cleanup process, preventing loss of license information during data reset, and enhanced overall user experience
