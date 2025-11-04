@@ -1,0 +1,14 @@
+LinkEmby v0.1.15 Release Notes
+
+Release Date: 2025-11-04
+
+🔧 Refactoring & Optimization
+
+  • Dashboard Performance Optimization: Consolidated multiple API calls into a unified endpoint to reduce network requests and improve page load speed
+  • Emby API Call Optimization: Replaced individual library item counting with Items/Counts endpoint, significantly reducing API calls
+  • Stats Report Caching Optimization: Added 24-hour TTL caching in license manager for improved data retrieval efficiency
+
+🎉 New Features
+
+  • Emby API Query Caching: Implemented configurable TTL caching mechanism to reduce duplicate API queries and improve resource allocation efficiency
+  • Proxy Connection Testing: Added proxy configuration testing feature allowing administrators to verify proxy connectivity and performance before saving
