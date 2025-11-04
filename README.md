@@ -21,7 +21,7 @@
 
 ## 🎯 在线体验
 
-**体验地址**: [https://linkemby.gz.mk](https://linkemby.gz.mk)
+**体验地址**: [https://demo.linkemby.com](https://demo.linkemby.com)
 
 **默认账号**:
 - 用户名: `admin`
