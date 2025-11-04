@@ -1,0 +1,8 @@
+LinkEmby v0.1.16 Release Notes
+
+Release Date: 2025-11-04
+
+🎉 New Features
+
+  • Enhanced On-Demand Feature: Added TV show metadata support with cross-server season availability detection and TMDB metadata caching
+  • Season Selection: New season selection and filtering functionality for easy browsing and choosing of specific TV show seasons
