@@ -46,10 +46,6 @@
 <td><b>🔹 邮箱</b></td>
 <td>umbras.hallows.0p@icloud.com</td>
 </tr>
-<tr>
-<td><b>🔹 微信</b></td>
-<td>berlin_lab</td>
-</tr>
 </table>
 
 💡 **如需购买授权许可或获取技术支持，欢迎随时联系！**
