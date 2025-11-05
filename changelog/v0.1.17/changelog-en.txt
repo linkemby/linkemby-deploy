@@ -1,0 +1,20 @@
+LinkEmby v0.1.17 Release Notes
+
+Release Date: 2025-11-05
+
+🔧 Refactoring & Optimization
+
+  • Payment Flow Optimization: Enhanced ePay integration logic, improving the stability of payment callback processing
+  • Common Callback Processing: Extracted common callback handling logic for GET/POST methods, increasing code reusability
+
+🎉 New Features
+
+  • Multiple Payment Methods Support: Added configuration options for Alipay, WeChat Pay, and QQ Pay, allowing users to select different payment methods as needed
+  • Order Association Enhancement: When creating payment links, payment method ID is now automatically saved to the order for subsequent tracking and management
+  • Debugging Enhancement: Added comprehensive debug logging throughout the payment callback flow, enabling the technical team to quickly identify and resolve issues
+  • Callback Compatibility Improvement: Supports plain text response for GET callbacks, improving compatibility with third-party payment systems
+
+🐛 Bug Fixes
+
+  • Payment Callback Fix: Fixed the GET request handling for ePay notifications, ensuring payment status is correctly received and updated
+  • Redirect Optimization: Fixed the return URL redirect issue after payment completion, now correctly redirecting to the payment status page
