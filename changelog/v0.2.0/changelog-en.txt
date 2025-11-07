@@ -1,0 +1,22 @@
+LinkEmby v0.2.0 Release Notes
+
+Release Date: 2025-11-07
+
+🎉 New Features
+
+  • Multi-level Referral Reward System: Users can earn rewards through multi-level referrals, supports 1-3 tier chains with configurable percentages, includes user referral stats dashboard and admin management panel
+  • Quick Server Import: Mobile clients support one-tap server configuration with multi-server selection and automatic URL scheme generation
+  • Server Allocation Strategy: New load balancing feature with allocation strategy selection, optimized server user management
+
+🔧 Refactoring & Optimization
+
+  • User Experience Enhancement: Improved quick add server interface with card layout, optimized interaction flow
+  • System Icon Upgrade: Replaced placeholder icons with professional Ant Design icons for better visual consistency
+  • Performance Improvement: Optimized server allocation logic, removed unnecessary API calls, faster page loading
+  • Code Quality Enhancement: Strengthened type safety, fixed N+1 query issues, optimized database transaction handling
+
+🐛 Bug Fixes
+
+  • Server Allocation Display: Fixed incorrect server allocation display in user management interface, now properly shows assigned server count and status
+  • Referral System Issues: Fixed referral settings component loading problems, improved transaction rollback mechanism for reward processing
+  • Payment Method Constraints: Removed unique constraint on payment method codes to allow multiple configurations of the same payment type
