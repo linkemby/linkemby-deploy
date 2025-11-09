@@ -100,6 +100,211 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
+# Check if a port is available
+# Returns 0 if port is available, 1 if occupied
+is_port_available() {
+    local port=$1
+    local host=${2:-"0.0.0.0"}
+
+    # Detect operating system
+    local os_type=$(uname -s)
+
+    # macOS: prioritize lsof (most reliable on macOS)
+    if [[ "$os_type" == "Darwin" ]]; then
+        if command_exists lsof; then
+            # Use lsof (most reliable on macOS)
+            if lsof -nP -iTCP:${port} -sTCP:LISTEN >/dev/null 2>&1; then
+                return 1
+            fi
+            return 0
+        elif command_exists netstat; then
+            # Fallback to netstat on macOS
+            # macOS netstat uses different format: *.port or address.port
+            if netstat -an -p tcp 2>/dev/null | grep "LISTEN" | grep -E "[\.:]${port}[[:space:]]" >/dev/null 2>&1; then
+                return 1
+            fi
+            return 0
+        fi
+    # Linux: prioritize ss, then netstat, then lsof
+    elif [[ "$os_type" == "Linux" ]]; then
+        if command_exists ss; then
+            # Use ss (modern Linux standard)
+            if ss -ln 2>/dev/null | grep -E ":${port}[[:space:]]" | grep -q LISTEN; then
+                return 1
+            fi
+            return 0
+        elif command_exists netstat; then
+            # Use netstat (works on most Linux systems)
+            if netstat -an 2>/dev/null | grep -E ":${port}[[:space:]]" | grep -q LISTEN; then
+                return 1
+            fi
+            return 0
+        elif command_exists lsof; then
+            # Use lsof as fallback on Linux
+            if lsof -nP -iTCP:${port} -sTCP:LISTEN >/dev/null 2>&1; then
+                return 1
+            fi
+            return 0
+        fi
+    # Other Unix-like systems: try lsof first, then netstat
+    else
+        if command_exists lsof; then
+            if lsof -nP -iTCP:${port} -sTCP:LISTEN >/dev/null 2>&1; then
+                return 1
+            fi
+            return 0
+        elif command_exists netstat; then
+            if netstat -an 2>/dev/null | grep -E ":${port}[[:space:]]" | grep -q LISTEN; then
+                return 1
+            fi
+            return 0
+        fi
+    fi
+
+    # Universal fallback: try nc (netcat) if available
+    if command_exists nc; then
+        # Different nc variants have different syntax
+        # Try GNU netcat style first (with -z flag for scanning)
+        if nc -z ${host} ${port} >/dev/null 2>&1; then
+            return 1
+        fi
+        return 0
+    fi
+
+    # No available tools found
+    print_warning "无法检测端口占用 (lsof/netstat/ss/nc 都不可用)"
+    print_info "系统类型: $os_type"
+    return 0
+}
+
+# Find next available port starting from the given port
+# Usage: find_available_port <start_port> [max_attempts]
+# Returns: available port number via stdout
+# Exit code: 0 on success, 1 on failure
+find_available_port() {
+    local start_port=$1
+    local max_attempts=${2:-50}
+    local current_port=$start_port
+    local attempts=0
+
+    while [ $attempts -lt $max_attempts ]; do
+        if is_port_available $current_port; then
+            echo $current_port
+            return 0
+        fi
+        current_port=$((current_port + 1))
+        attempts=$((attempts + 1))
+    done
+
+    # Could not find available port after max attempts
+    # Return empty to indicate error, caller handles error message
+    return 1
+}
+
+# Parse port status message
+# Usage: parse_port_message <message> <field>
+# Fields: "status", "old_port", "new_port"
+# Returns: extracted field value
+parse_port_message() {
+    local msg=$1
+    local field=$2
+
+    case "$field" in
+        status)
+            echo "$msg" | cut -d: -f1
+            ;;
+        old_port)
+            echo "$msg" | cut -d: -f2
+            ;;
+        new_port)
+            echo "$msg" | cut -d: -f3
+            ;;
+        *)
+            echo ""
+            return 1
+            ;;
+    esac
+    return 0
+}
+
+# Check port and get status message
+# Usage: check_port_status <default_port> <service_name> <output_var_name>
+# Sets the variable named in output_var_name to: "available:port" or "occupied:old:new" or "error:message"
+check_port_status() {
+    local default_port=$1
+    local service_name=$2
+    local output_var=$3
+    local suggested_port=$default_port
+    local status_msg=""
+
+    # Check if default port is available
+    if ! is_port_available $default_port; then
+        # Find next available port
+        suggested_port=$(find_available_port $default_port)
+        if [ $? -ne 0 ]; then
+            # Could not find available port
+            status_msg="error:无法找到可用端口"
+            eval "$output_var='$status_msg'"
+            return 1
+        fi
+
+        # Port is occupied
+        status_msg="occupied:${default_port}:${suggested_port}"
+    else
+        # Port is available
+        status_msg="available:${default_port}"
+    fi
+
+    eval "$output_var='$status_msg'"
+    return 0
+}
+
+# Generic port input prompt with validation
+# Usage: prompt_for_port <service_name> <default_port> <port_status_msg> <is_upgrade> <result_var>
+# Sets the variable named in result_var to the selected port number
+prompt_for_port() {
+    local service_name=$1
+    local default_port=$2
+    local port_status_msg=$3
+    local is_upgrade=$4
+    local result_var=$5
+
+    echo ""
+
+    # Display port check result for fresh installations
+    if [ "$is_upgrade" = false ] && [ -n "$port_status_msg" ]; then
+        local status=$(parse_port_message "$port_status_msg" "status")
+        if [[ "$status" == "occupied" ]]; then
+            local occupied_port=$(parse_port_message "$port_status_msg" "old_port")
+            local suggested_port=$(parse_port_message "$port_status_msg" "new_port")
+            print_warning "${service_name} 默认端口 ${occupied_port} 已被占用"
+            print_info "建议使用端口: ${suggested_port}"
+        fi
+    fi
+
+    # User input loop with validation
+    while true; do
+        read -r -p "请输入 ${service_name} 端口 (回车使用 $default_port): " user_port </dev/tty
+        user_port=${user_port:-$default_port}
+
+        # Validate port number format
+        if [[ "$user_port" =~ ^[0-9]+$ ]] && [ "$user_port" -ge 1 ] && [ "$user_port" -le 65535 ]; then
+            # For fresh installation, check if the chosen port is available
+            if [ "$is_upgrade" = false ]; then
+                if ! is_port_available $user_port; then
+                    print_warning "端口 $user_port 已被占用，请选择其他端口"
+                    continue
+                fi
+            fi
+            # Set result and break
+            eval "$result_var='$user_port'"
+            break
+        else
+            print_error "端口号必须是 1-65535 之间的数字"
+        fi
+    done
+}
+
 # Check Docker permission
 check_docker_permission() {
     if ! docker ps >/dev/null 2>&1; then
@@ -432,8 +637,10 @@ interactive_config() {
 
     # Read existing .env values if available
     local env_file="$INSTALL_DIR/.env"
+    local is_upgrade=false
     if [ -f "$env_file" ]; then
         print_info "检测到现有配置，读取默认值..."
+        is_upgrade=true
     fi
 
     # Get defaults from existing .env or use hardcoded defaults
@@ -441,6 +648,36 @@ interactive_config() {
     local default_linkemby_port=$(get_env_value "$env_file" "LINKEMBY_PORT" "3000")
     local default_postgres_port=$(get_env_value "$env_file" "POSTGRES_PORT" "5432")
     local default_redis_port=$(get_env_value "$env_file" "REDIS_PORT" "6379")
+
+    # Port check messages
+    local linkemby_port_msg=""
+    local postgres_port_msg=""
+    local redis_port_msg=""
+
+    # For fresh installation, check port availability and suggest alternatives
+    if [ "$is_upgrade" = false ]; then
+        print_info "正在检测端口占用情况..."
+
+        # Check LinkEmby port
+        check_port_status $default_linkemby_port "LinkEmby" linkemby_port_msg
+        if [[ "$linkemby_port_msg" == occupied:* ]]; then
+            default_linkemby_port=$(parse_port_message "$linkemby_port_msg" "new_port")
+        fi
+
+        # Check PostgreSQL port
+        check_port_status $default_postgres_port "PostgreSQL" postgres_port_msg
+        if [[ "$postgres_port_msg" == occupied:* ]]; then
+            default_postgres_port=$(parse_port_message "$postgres_port_msg" "new_port")
+        fi
+
+        # Check Redis port
+        check_port_status $default_redis_port "Redis" redis_port_msg
+        if [[ "$redis_port_msg" == occupied:* ]]; then
+            default_redis_port=$(parse_port_message "$redis_port_msg" "new_port")
+        fi
+
+        echo ""
+    fi
 
     # NEXTAUTH_URL
     while true; do
@@ -454,41 +691,10 @@ interactive_config() {
         fi
     done
 
-    # LinkEmby Port
-    while true; do
-        read -r -p "请输入 LinkEmby 端口 (回车使用默认值 $default_linkemby_port): " LINKEMBY_PORT </dev/tty
-        LINKEMBY_PORT=${LINKEMBY_PORT:-$default_linkemby_port}
-
-        if [[ "$LINKEMBY_PORT" =~ ^[0-9]+$ ]] && [ "$LINKEMBY_PORT" -ge 1 ] && [ "$LINKEMBY_PORT" -le 65535 ]; then
-            break
-        else
-            print_error "端口号必须是 1-65535 之间的数字"
-        fi
-    done
-
-    # PostgreSQL Port
-    while true; do
-        read -r -p "请输入 PostgreSQL 端口 (回车使用默认值 $default_postgres_port): " POSTGRES_PORT </dev/tty
-        POSTGRES_PORT=${POSTGRES_PORT:-$default_postgres_port}
-
-        if [[ "$POSTGRES_PORT" =~ ^[0-9]+$ ]] && [ "$POSTGRES_PORT" -ge 1 ] && [ "$POSTGRES_PORT" -le 65535 ]; then
-            break
-        else
-            print_error "端口号必须是 1-65535 之间的数字"
-        fi
-    done
-
-    # Redis Port
-    while true; do
-        read -r -p "请输入 Redis 端口 (回车使用默认值 $default_redis_port): " REDIS_PORT </dev/tty
-        REDIS_PORT=${REDIS_PORT:-$default_redis_port}
-
-        if [[ "$REDIS_PORT" =~ ^[0-9]+$ ]] && [ "$REDIS_PORT" -ge 1 ] && [ "$REDIS_PORT" -le 65535 ]; then
-            break
-        else
-            print_error "端口号必须是 1-65535 之间的数字"
-        fi
-    done
+    # Port configuration using generic prompt function
+    prompt_for_port "LinkEmby" "$default_linkemby_port" "$linkemby_port_msg" "$is_upgrade" LINKEMBY_PORT
+    prompt_for_port "PostgreSQL" "$default_postgres_port" "$postgres_port_msg" "$is_upgrade" POSTGRES_PORT
+    prompt_for_port "Redis" "$default_redis_port" "$redis_port_msg" "$is_upgrade" REDIS_PORT
 
     echo ""
 }
