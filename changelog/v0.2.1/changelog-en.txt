@@ -1,0 +1,19 @@
+LinkEmby v0.2.1 Release Notes
+
+Release Date: 2025-11-09
+
+🔧 Refactoring & Optimization
+
+  • UI Layout Optimization: Refactored admin and user interfaces to implement independent scrolling for sidebar and content areas, improving mobile menu experience and responsive design
+  • Code Structure Optimization: Refactored EmbyApi module for better maintainability and code organization
+
+🎉 New Features
+
+  • Emby Webhook Integration: Added Emby server webhook support to receive and process events like library updates, playback start/stop, laying foundation for future notification features
+  • User Anomaly Detection: Implemented intelligent user anomaly detection to identify mismatches between subscription status and Emby account status, helping administrators better manage user resources
+  • Message Queue System: Integrated BullMQ job queue to optimize subscription purchase flow, improving system performance and stability
+  • Subscription Auto-Renewal: Added automatic subscription renewal feature with configurable activity threshold and renewal settings, simplifying subscription management
+
+🐛 Bug Fixes
+
+  • Purchase Flow Optimization: Fixed performance issues in subscription purchase process through asynchronous processing, enhancing user experience
