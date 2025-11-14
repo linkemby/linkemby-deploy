@@ -1,0 +1,17 @@
+LinkEmby v0.2.2 Release Notes
+
+Release Date: 2025-11-14
+
+🎉 New Features
+
+  • License-based Branding Control: Support customizing brand visibility based on license configuration to hide or display "Powered by LinkEmby" footer, enhancing enterprise customization capabilities
+
+  • Enhanced User Management: Support importing users without subscriptions, add batch subscription time addition functionality, increase import limit to 2000 users, and introduce subscription and active status filters
+
+  • Emby Server Backup URL: Add backup URL support for Emby servers to automatically switch when the primary server address is unavailable, ensuring stable user connectivity
+
+  • Statistics and Anomaly Detection: Introduce comprehensive playback analytics module and user behavior anomaly detection system with real-time session monitoring and historical data analysis to help administrators understand platform usage
+
+🔧 Refactoring & Optimization
+
+  • Enhanced Release Automation: Improve release script automation with strict pre-release validation, automatic deployment repository synchronization, and automatic version tag creation, streamlining the release workflow
