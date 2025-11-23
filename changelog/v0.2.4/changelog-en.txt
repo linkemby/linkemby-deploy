@@ -1,0 +1,11 @@
+LinkEmby v0.2.4 Release Notes
+
+Release Date: 2025-11-23
+
+🔧 Refactoring & Optimization
+
+  • Docker Container Network: Updated the local development network name from 'linkemby' to 'linkemby-local' to better distinguish between local development and production environments. All services (PostgreSQL, Redis, Emby, LinkEmby, Cron) have been synchronized accordingly.
+
+🐛 Bug Fixes
+
+  • License Validation: Fixed the validation logic for unlimited users and servers licenses. Previously, when set to unlimited (value 0), the system would incorrectly block all operations. Now validation is properly skipped for unlimited licenses. Affected areas include user registration, admin user creation, and Emby server addition across multiple functional modules.
