@@ -1,0 +1,27 @@
+LinkEmby v0.2.3 Release Notes
+
+Release Date: 2025-11-23
+
+🎉 New Features
+
+  • Cloudflare Turnstile Human Verification: Added Turnstile verification for login and registration pages to enhance account security
+
+  • User Playback Statistics: New user statistics page with personal viewing history and data visualization capabilities
+
+  • On-Demand System Improvements: Enhanced request status display on media cards to prevent duplicate requests and improve user experience
+
+🔧 Refactoring & Optimization
+
+  • License Management Optimization: Refactored license manager with improved UI and subscription status handling
+
+  • Configuration and Environment Support: Updated environment configuration examples, improved Docker setup, and enhanced user management and password change features
+
+  • Statistics Monitoring Enhancement: Improved anomaly detection with configurable history filtering and unified cache key naming convention
+
+  • API Error Handling: Improved Emby API error handling and WASM loader error tolerance
+
+🐛 Bug Fixes
+
+  • Fixed Auto-Renewal: Resolved subscription auto-renewal not taking effect and improved subscription modal validation
+
+  • Improved Server Backup Support: Enhanced server backup URL functionality
