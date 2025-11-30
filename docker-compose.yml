@@ -92,6 +92,7 @@ services:
       CRON_JOB_CACHE_CLEANUP: '0 2 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/cache-cleanup'
       # CRON_JOB_USER_STATUS: '0 3 * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/user-status-check'
       CRON_JOB_EMBY_HEALTH: '*/5 * * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/emby-health-check'
+      CRON_JOB_ANOMALY_DETECTION: '*/10 * * * * curl -H "Authorization: Bearer ${CRON_SECRET}" -sSf http://linkemby:3000/api/cron/anomaly-detection'
     depends_on:
       linkemby:
         condition: service_healthy
