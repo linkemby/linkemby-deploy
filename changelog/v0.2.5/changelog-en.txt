@@ -1,0 +1,21 @@
+LinkEmby v0.2.5 Release Notes
+
+Release Date: 2025-11-30
+
+🎉 New Features
+
+  • Smart Search Functionality: Added top search button in on-demand browser with modal for quick media search across multiple servers, improving content discovery
+
+  • Email Change Verification System: Users can now securely update their account email address with code verification workflow. Includes email change and registration templates for enhanced security
+
+  • Real-Time Monitoring Dashboard: New real-time monitoring tab to view currently playing sessions, active users, concurrent streams, and bandwidth usage. Displays server health status with CPU/memory metrics and detailed session information
+
+  • Custom CSS/JavaScript and Themes: Administrators can now inject custom CSS and JavaScript code to customize platform functionality. Support for custom background images on authentication pages for branded experience
+
+🔧 Refactoring & Optimization
+
+  • Dashboard and Statistics Enhancement: Improved data visualization with new time period selector (day/month/quarter/half-year/year) to display revenue and user growth trends. Refined playback statistics accuracy and unique user counting methodology
+
+  • Media Cards and Responsive Design: Enhanced MediaCard layout with improved image handling and skeleton loading states for better UX. Optimized responsive design for mobile devices with debounced search functionality for improved performance
+
+  • Anomaly Detection and Data Caching: Optimized anomaly detection mechanism with improved caching strategy. Real-time data now uses 5-minute cache cycle, improving overall data processing efficiency and system performance
